@@ -1,5 +1,5 @@
+/* eslint-disable @next/next/no-img-element */
 import React from "react";
-import Image from 'next/image'; // Import the Image component from Next.js
 
 interface CardProps {
   skill: string;
@@ -9,23 +9,18 @@ interface CardProps {
 
 const Card = ({ skill, level, image }: CardProps) => {
   return (
-    <div className="card flex flex-col justify-center p-5 rounded-lg relative text-white overflow-hidden h-fit w-fit z-10 transition-all duration-300">
-      <div className="flex flex-col items-center">
-      {image && (
-          <Image
-            src={image}
-            alt={skill}
-            width={40}   // Specify the width (in pixels)
-            height={40}  // Specify the height (in pixels)
-            className="object-contain mb-4 shadow-lg" // You can still use Tailwind classes
-          />
-        )}
-        <h2 className="text-2xl font-bold mb-2">{skill}</h2>
-        <p className="text-sm opacity-70">Level: {level}</p>
+    <div className="p-4 rounded-lg border bg-card relative transition-all duration-200 cursor-pointer bg-muted border-border">
+      <div className="flex items-start justify-between">
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-2">
+            <img src={image} alt={skill} className="w-6 h-6 "></img>
+            <span className="text-sm font-medium text-foreground">{skill}</span>
+          </div>
+          <div className="space-y-0.5 pl-8">
+            <div className="text-sm font-medium text-foreground">Level {level}</div>
+          </div>
+        </div>
       </div>
-
-      {/* Card Background or any additional styles can be added */}
-      <div className="inset-0 absolute z-0 bg-gradient-to-b from-blue-500 to-blue-800 opacity-30"></div>
     </div>
   );
 };
