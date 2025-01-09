@@ -1,8 +1,9 @@
+'use client'
+
 import Header from "../components/header";
 import SwitchAccount from "../components/switchAccount";
 import QueueContainer from "../components/queueContainer";
 import SkillContainer from "../components/skillContainer";
-
 
 export default function Home() {
   return (
