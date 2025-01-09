@@ -10,13 +10,20 @@
   },
   "dependencies": {
     "@nextui-org/react": "^2.6.11",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
     "next": "15.1.4",
+    "passport": "^0.7.0",
+    "passport-discord": "^0.1.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@types/express-session": "^1.18.1",
     "@types/node": "^20",
+    "@types/passport": "^1.0.17",
+    "@types/passport-discord": "^0.1.14",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",

@@ -12,3 +12,10 @@
 - User can see logged in account details (quests, levels, diaries, screenshot every min if not too expensive)
 - Cloud saved scheduled events + import/export
 - Schedule breaks
+
+**Roadmap**:
+- Login
+- Add/rearrange/remove tasks in scheduled queue (skill, level or duration, method)
+- Import/export to local file
+- Rate limit (1 min timeout) once scheduled queue is submitted to cloud
+- Sync instructions with cloud
