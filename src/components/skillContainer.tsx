@@ -1,7 +1,7 @@
 "use client";
 
 import Card from "./card";
-import Dropdown from "./dropdown/dropdownProp";
+import Dropdown from "./dropdown/dropdown";
 import ChevronIcon from "./dropdown/chevronIcon";
 
 const SkillContainer = () => {
@@ -42,7 +42,7 @@ const SkillContainer = () => {
 
   return (
     <Dropdown
-      title="Skills"
+      title="Current Skills"
       icon={<ChevronIcon isOpen={false} />} // Default not open
       content={
         <div className="p-4 bg-muted text-muted-foreground">
