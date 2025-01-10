@@ -34,6 +34,7 @@ const Login = () => {
     return <div>Loading...</div>; // Show loading state while fetching user data
   }
 
+  // TODO: Discord login here
   // if (!user) {
   //   return <div>Please log in to switch accounts.</div>; // Prompt to log in if no user is found
   // }
