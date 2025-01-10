@@ -14,8 +14,10 @@ const handle = app.getRequestHandler();
 app.prepare().then(() => {
   const server = express();
 
+  // Session middleware setup
   server.use(session({ secret: 'secret', resave: false, saveUninitialized: false }));
 
+  // Passport Discord strategy setup
   passport.use(new DiscordStrategy({
     clientID: process.env.DISCORD_CLIENT_ID,
     clientSecret: process.env.DISCORD_CLIENT_SECRET,
@@ -31,17 +33,16 @@ app.prepare().then(() => {
   server.use(passport.initialize());
   server.use(passport.session());
 
-  // Define /api/user route
+  // Route to fetch user data
   server.get('/api/user', (req, res) => {
     if (req.isAuthenticated()) {
-      // Send user data if authenticated
       res.status(200).json({ user: req.user });
     } else {
-      // If not authenticated, send null or an empty user object
       res.status(401).json({ user: null });
     }
   });
 
+  // Discord OAuth routes
   server.get('/auth/discord', passport.authenticate('discord'));
   server.get('/auth/discord/callback', passport.authenticate('discord', {
     failureRedirect: '/',
@@ -49,10 +50,12 @@ app.prepare().then(() => {
     res.redirect('/');
   });
 
+  // Catch-all route handler for Next.js pages
   server.all('*', (req, res) => {
     return handle(req, res);
   });
 
+  // Start the server
   server.listen(process.env.PORT, (err) => {
     if (err) throw err;
     console.log('> Ready on http://localhost:3000');

@@ -2,8 +2,8 @@
 
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { motion } from "framer-motion";
-import ChevronIcon from "./dropdown/chevronIcon";
-import Dropdown from "./dropdown/dropdown";
+import ChevronIcon from "../dropdown/chevronIcon";
+import Dropdown from "../dropdown/dropdown";
 
 // Define types for Card and ColumnProps
 interface Card {
