@@ -1,8 +1,8 @@
 "use client";
 
-import Card from "./card";
-import Dropdown from "./dropdown/dropdown";
-import ChevronIcon from "./dropdown/chevronIcon";
+import SkillCard from "./skillCard";
+import Dropdown from "../dropdown/dropdown";
+import ChevronIcon from "../dropdown/chevronIcon";
 
 const SkillContainer = () => {
   interface Skill {
@@ -48,7 +48,7 @@ const SkillContainer = () => {
         <div className="p-4 bg-muted text-muted-foreground">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
             {skills.map((skill) => (
-              <Card
+              <SkillCard
                 key={skill.skill} // Unique key for each Card component
                 skill={skill.skill}
                 level={skill.level}

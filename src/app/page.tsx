@@ -1,9 +1,9 @@
-'use client'
+"use client";
 
 import Header from "../components/header";
 import Account from "../components/account/account";
-import QueueContainer from "../components/queue/queueContainer";
-import SkillContainer from "../components/skillContainer";
+import Queue from "../components/queue/queue";
+import SkillContainer from "../components/skill/skillContainer";
 
 export default function Home() {
   return (
@@ -12,7 +12,7 @@ export default function Home() {
         <Account />
 
         <Header />
-        <QueueContainer />
+        <Queue />
         <SkillContainer />
       </div>
     </div>

@@ -4,20 +4,16 @@ import React, { Dispatch, SetStateAction, useState } from "react";
 import { motion } from "framer-motion";
 import ChevronIcon from "../dropdown/chevronIcon";
 import Dropdown from "../dropdown/dropdown";
+import { QueueCard } from "../../app/page";
 
 // Define types for Card and ColumnProps
-interface Card {
-  id: string;
-  title: string;
-  column: string;
-}
 
 interface ColumnProps {
   title: string;
   headingColor: string;
-  cards: Card[];
+  cards: QueueCard[];
   column: string;
-  setCards: Dispatch<SetStateAction<Card[]>>;
+  setCards: Dispatch<SetStateAction<QueueCard[]>>;
 }
 
 export interface Button {
@@ -25,35 +21,17 @@ export interface Button {
   onClick: () => void; // The onClick function
 }
 
-const queueButtons: Button[] = [
-  {
-    label: "Test",
-    onClick: () => {
-      console.log("Test button clicked!");
-    },
-  },
-  {
-    label: "ASD",
-    onClick: () => {
-      console.log("ASD button clicked!");
-    },
-  },
-];
-
-const QueueContainer = () => {
+const QueueContainer = ({ cards, setCards }: { cards: QueueCard[], setCards: React.Dispatch<React.SetStateAction<QueueCard[]>> }) => {
   return (
     <Dropdown
       title="Queue"
-      icon={<ChevronIcon isOpen={false} />} // Default not open
-      content={<Board />} // Example content
-      buttons={queueButtons}
+      icon={<ChevronIcon isOpen={false} />}
+      content={<Board cards={cards} setCards={setCards} />}
     />
   );
 };
 
-const Board = () => {
-  const [cards, setCards] = useState<Card[]>(DEFAULT_CARDS);
-
+const Board = ({ cards, setCards }: { cards: QueueCard[]; setCards: Dispatch<SetStateAction<QueueCard[]>> }) => {
   return (
     // <div className="flex h-full w-full gap-3 p-12">
     <div className="flex h-full w-full gap-3">
@@ -187,7 +165,6 @@ const Column = ({
           return <Card key={c.id} {...c} handleDragStart={handleDragStart} />;
         })}
         <DropIndicator beforeId={null} column={column} />
-        <AddCard column={column} setCards={setCards} />
       </div>
     </div>
   );
@@ -197,7 +174,7 @@ interface CardProps {
   title: string;
   id: string;
   column: string;
-  handleDragStart: (e: React.DragEvent<HTMLDivElement>, card: Card) => void;
+  handleDragStart: (e: React.DragEvent<HTMLDivElement>, card: QueueCard) => void;
 }
 
 const Card = ({ title, id, column, handleDragStart }: CardProps) => {
@@ -231,76 +208,6 @@ const DropIndicator = ({ beforeId, column }: DropIndicatorProps) => {
     />
   );
 };
-
-interface AddCardProps {
-  column: string;
-  setCards: Dispatch<SetStateAction<Card[]>>;
-}
-
-const AddCard = ({ column, setCards }: AddCardProps) => {
-  const [text, setText] = useState("");
-  const [adding, setAdding] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!text.trim().length) return;
-
-    const newCard: Card = {
-      column,
-      title: text.trim(),
-      id: Math.random().toString(),
-    };
-
-    setCards((pv) => [...pv, newCard]);
-
-    setAdding(false);
-  };
-
-  return (
-    <>
-      {adding ? (
-        <motion.form layout onSubmit={handleSubmit}>
-          <textarea
-            onChange={(e) => setText(e.target.value)}
-            autoFocus
-            placeholder="Add new task..."
-            className="w-full rounded border border-violet-400 bg-violet-400/20 p-3 text-sm text-neutral-50 placeholder-violet-300 focus:outline-0"
-          />
-          <div className="mt-1.5 flex items-center justify-end gap-1.5">
-            <button
-              onClick={() => setAdding(false)}
-              className="px-3 py-1.5 text-xs text-neutral-400 transition-colors hover:text-neutral-50"
-            >
-              Close
-            </button>
-            <button
-              type="submit"
-              className="flex items-center gap-1.5 rounded bg-neutral-50 px-3 py-1.5 text-xs text-neutral-950 transition-colors hover:bg-neutral-300"
-            >
-              <span>Add</span>
-            </button>
-          </div>
-        </motion.form>
-      ) : (
-        <motion.button
-          layout
-          onClick={() => setAdding(true)}
-          className="flex w-full items-center gap-1.5 px-3 py-1.5 text-xs text-neutral-400 transition-colors hover:text-neutral-50"
-        >
-          <span>Add card</span>
-        </motion.button>
-      )}
-    </>
-  );
-};
-
-const DEFAULT_CARDS: Card[] = [
-  // QUEUE
-  { title: "Woodcutting to 30", id: "1", column: "queue" },
-  { title: "Crafting to 50", id: "2", column: "queue" },
-  { title: "Hunter to 70", id: "3", column: "queue" },
-];
 
 // TODO: Buttons to do (Modify (import/export, add/remove to queue), deploy (send to cloud, rate limit this)
 // TODO: Move add/remove card to where queue is

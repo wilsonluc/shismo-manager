@@ -7,7 +7,7 @@ interface CardProps {
   image?: string;
 }
 
-const Card = ({ skill, level, image }: CardProps) => {
+const SkillCard = ({ skill, level, image }: CardProps) => {
   return (
     <div className="p-4 rounded-lg border bg-card relative transition-all duration-200 cursor-pointer bg-muted border-border">
       <div className="flex items-start justify-between">
@@ -25,4 +25,4 @@ const Card = ({ skill, level, image }: CardProps) => {
   );
 };
 
-export default Card;
+export default SkillCard;
