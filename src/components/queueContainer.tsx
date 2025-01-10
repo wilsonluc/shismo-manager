@@ -23,7 +23,7 @@ interface ColumnProps {
 const QueueContainer = () => {
   return (
     <Dropdown
-      title="Scheduled Queue"
+      title="Queue"
       icon={<ChevronIcon isOpen={false} />} // Default not open
       content={<Board />} // Example content
     />
@@ -34,32 +34,12 @@ const Board = () => {
   const [cards, setCards] = useState<Card[]>(DEFAULT_CARDS);
 
   return (
-    <div className="flex h-full w-full gap-3 overflow-scroll p-12">
+    // <div className="flex h-full w-full gap-3 p-12">
+    <div className="flex h-full w-full gap-3">
       <Column
-        title="Backlog"
-        column="backlog"
+        title="Queue"
+        column="queue"
         headingColor="text-neutral-500"
-        cards={cards}
-        setCards={setCards}
-      />
-      <Column
-        title="TODO"
-        column="todo"
-        headingColor="text-yellow-200"
-        cards={cards}
-        setCards={setCards}
-      />
-      <Column
-        title="In progress"
-        column="doing"
-        headingColor="text-blue-200"
-        cards={cards}
-        setCards={setCards}
-      />
-      <Column
-        title="Complete"
-        column="done"
-        headingColor="text-emerald-200"
         cards={cards}
         setCards={setCards}
       />
@@ -68,8 +48,6 @@ const Board = () => {
 };
 
 const Column = ({
-  title,
-  headingColor,
   cards,
   column,
   setCards,
@@ -175,12 +153,8 @@ const Column = ({
   const filteredCards = cards.filter((c) => c.column === column);
 
   return (
-    <div className="w-56 shrink-0">
-      <div className="mb-3 flex items-center justify-between">
-        <h3 className={`font-medium ${headingColor}`}>{title}</h3>
-        <span className="rounded text-sm text-neutral-400">
-          {filteredCards.length}
-        </span>
+    <div className="w-full shrink-0">
+      <div className="flex items-center justify-between">
       </div>
       <div
         onDrop={handleDragEnd}
@@ -301,33 +275,13 @@ const AddCard = ({ column, setCards }: AddCardProps) => {
 };
 
 const DEFAULT_CARDS: Card[] = [
-  // BACKLOG
-  { title: "Look into render bug in dashboard", id: "1", column: "backlog" },
-  { title: "SOX compliance checklist", id: "2", column: "backlog" },
-  { title: "[SPIKE] Migrate to Azure", id: "3", column: "backlog" },
-  { title: "Document Notifications service", id: "4", column: "backlog" },
-  // TODO
-  {
-    title: "Research DB options for new microservice",
-    id: "5",
-    column: "todo",
-  },
-  { title: "Postmortem for outage", id: "6", column: "todo" },
-  { title: "Sync with product on Q3 roadmap", id: "7", column: "todo" },
-
-  // DOING
-  {
-    title: "Refactor context providers to use Zustand",
-    id: "8",
-    column: "doing",
-  },
-  { title: "Add logging to daily CRON", id: "9", column: "doing" },
-  // DONE
-  {
-    title: "Set up DD dashboards for Lambda listener",
-    id: "10",
-    column: "done",
-  },
+  // QUEUE
+  { title: "Woodcutting to 30", id: "1", column: "queue" },
+  { title: "Crafting to 50", id: "2", column: "queue" },
+  { title: "Hunter to 70", id: "3", column: "queue" },
 ];
+
+// TODO: Move add/remove card to where queue is
+// TODO: Attach a skill to Card (to display icon, as well as lvl target/duration)
 
 export default QueueContainer;
