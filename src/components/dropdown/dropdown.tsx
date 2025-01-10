@@ -1,14 +1,21 @@
 // src/components/Dropdown.tsx
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { Button } from "../queue/queueContainer";
 
 interface DropdownProps {
   title: string;
   content: React.ReactNode; // Content can be anything (text, components, etc.)
   icon: React.ReactNode; // Icon that will rotate on toggle
+  buttons?: Button[];
 }
 
-const Dropdown: React.FC<DropdownProps> = ({ title, content, icon }) => {
+const Dropdown: React.FC<DropdownProps> = ({
+  title,
+  content,
+  icon,
+  buttons,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleDropdown = () => {
@@ -25,17 +32,32 @@ const Dropdown: React.FC<DropdownProps> = ({ title, content, icon }) => {
           >
             <div
               className={`transform transition-transform duration-300 ${
-                isOpen ? 'rotate-90' : ''
+                isOpen ? "rotate-90" : ""
               }`}
             >
               {icon}
             </div>
           </button>
           <h2 className="text-base font-semibold text-foreground">{title}</h2>
+          {buttons && (
+            <div className="flex gap-2">
+              {buttons.map((button, index) => (
+                <button
+                  key={index}
+                  onClick={button.onClick} // Attach the onClick event handler
+                  className="px-4 py-2 bg-blue-500 text-white rounded"
+                >
+                  {button.label}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
-      {isOpen && <div className="p-4 bg-muted text-muted-foreground">{content}</div>}
+      {isOpen && (
+        <div className="p-4 bg-muted text-muted-foreground">{content}</div>
+      )}
     </div>
   );
 };

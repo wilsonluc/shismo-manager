@@ -20,12 +20,33 @@ interface ColumnProps {
   setCards: Dispatch<SetStateAction<Card[]>>;
 }
 
+export interface Button {
+  label: string;
+  onClick: () => void; // The onClick function
+}
+
+const queueButtons: Button[] = [
+  {
+    label: "Test",
+    onClick: () => {
+      console.log("Test button clicked!");
+    },
+  },
+  {
+    label: "ASD",
+    onClick: () => {
+      console.log("ASD button clicked!");
+    },
+  },
+];
+
 const QueueContainer = () => {
   return (
     <Dropdown
       title="Queue"
       icon={<ChevronIcon isOpen={false} />} // Default not open
       content={<Board />} // Example content
+      buttons={queueButtons}
     />
   );
 };
@@ -281,6 +302,7 @@ const DEFAULT_CARDS: Card[] = [
   { title: "Hunter to 70", id: "3", column: "queue" },
 ];
 
+// TODO: Buttons to do (Modify (import/export, add/remove to queue), deploy (send to cloud, rate limit this)
 // TODO: Move add/remove card to where queue is
 // TODO: Attach a skill to Card (to display icon, as well as lvl target/duration)
 
