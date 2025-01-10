@@ -30,9 +30,9 @@ const Login = () => {
     fetchUser();
   }, []);
 
-  // if (loading) {
-  //   return <div>Loading...</div>; // Show loading state while fetching user data
-  // }
+  if (loading) {
+    return <div>Loading...</div>; // Show loading state while fetching user data
+  }
 
   // if (!user) {
   //   return <div>Please log in to switch accounts.</div>; // Prompt to log in if no user is found
@@ -42,9 +42,8 @@ const Login = () => {
     <div className="absolute top-0 right-0">
       <button
         className="relative inline-flex h-10 w-30 items-center justify-center rounded-lg 
-      border border-border bg-background/50 hover:bg-accent 
-      transition-colors duration-200"
-        title="Current theme: dark"
+        border border-border bg-background/50 hover:bg-accent 
+        transition-colors duration-200 flex items-center gap-2 p-4"
         onClick={() => {
           if (!user) {
             window.location.href = "/auth/discord/callback"; // Redirect to Discord login if no user
@@ -54,7 +53,7 @@ const Login = () => {
         {user ? (
           <div>Welcome, {user.username}!</div> // Show username if user exists
         ) : (
-          <div>Login with Discord.</div> // Show login button if no user
+          <div>Login with Discord</div> // Show login button if no user
         )}
       </button>
     </div>
