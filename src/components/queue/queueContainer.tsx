@@ -4,16 +4,15 @@ import React, { Dispatch, SetStateAction, useState } from "react";
 import { motion } from "framer-motion";
 import ChevronIcon from "../dropdown/chevronIcon";
 import Dropdown from "../dropdown/dropdown";
-import { QueueCard } from "./queue";
+import { Task } from "./queue"; // Import Task type from the previous file
 
-// Define types for Card and ColumnProps
+// Define types for Task and ColumnProps
 
 interface ColumnProps {
   title: string;
   headingColor: string;
-  cards: QueueCard[];
-  column: string;
-  setCards: Dispatch<SetStateAction<QueueCard[]>>;
+  tasks: Task[]; // Using Task[] directly instead of QueueCard[]
+  setTasks: Dispatch<SetStateAction<Task[]>>; // Changed from QueueCard[] to Task[]
 }
 
 export interface Button {
@@ -21,11 +20,17 @@ export interface Button {
   onClick: () => void; // The onClick function
 }
 
-const QueueContainer = ({ cards, setCards }: { cards: QueueCard[], setCards: React.Dispatch<React.SetStateAction<QueueCard[]>> }) => {
-  const [selectedCards, setSelectedCards] = useState<string[]>([]);
+const QueueContainer = ({
+  tasks,
+  setTasks,
+}: {
+  tasks: Task[];
+  setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
+}) => {
+  const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
 
-  const toggleSelectCard = (id: string) => {
-    setSelectedCards((prevSelected) => {
+  const toggleSelectTask = (id: string) => {
+    setSelectedTasks((prevSelected) => {
       if (prevSelected.includes(id)) {
         return prevSelected.filter((selectedId) => selectedId !== id); // Deselect if already selected
       } else {
@@ -34,9 +39,11 @@ const QueueContainer = ({ cards, setCards }: { cards: QueueCard[], setCards: Rea
     });
   };
 
-  const handleRemoveSelectedCards = () => {
-    setCards((prevCards) => prevCards.filter((card) => !selectedCards.includes(card.id))); // Remove selected cards
-    setSelectedCards([]); // Clear selected cards after removal
+  const handleRemoveSelectedTasks = () => {
+    setTasks((prevTasks) =>
+      prevTasks.filter((task) => !selectedTasks.includes(task.id))
+    ); // Remove selected tasks
+    setSelectedTasks([]); // Clear selected tasks after removal
   };
 
   return (
@@ -44,19 +51,19 @@ const QueueContainer = ({ cards, setCards }: { cards: QueueCard[], setCards: Rea
       title="Queue"
       icon={<ChevronIcon isOpen={false} />}
       content={
-        <Board 
-          cards={cards} 
-          setCards={setCards} 
-          selectedCards={selectedCards} 
-          toggleSelectCard={toggleSelectCard} 
+        <Board
+          tasks={tasks}
+          setTasks={setTasks}
+          selectedTasks={selectedTasks}
+          toggleSelectTask={toggleSelectTask}
         />
       }
       buttons={
-        selectedCards.length > 0 // Show the "Remove" button only if there are selected cards
+        selectedTasks.length > 0 // Show the "Remove" button only if there are selected tasks
           ? [
               {
                 label: "Remove",
-                onClick: handleRemoveSelectedCards, // Attach removal function
+                onClick: handleRemoveSelectedTasks, // Attach removal function
               },
             ]
           : undefined
@@ -65,57 +72,67 @@ const QueueContainer = ({ cards, setCards }: { cards: QueueCard[], setCards: Rea
   );
 };
 
-const Board = ({ cards, setCards, selectedCards, toggleSelectCard }: { cards: QueueCard[]; setCards: Dispatch<SetStateAction<QueueCard[]>>; selectedCards: string[]; toggleSelectCard: (id: string) => void }) => {
+const Board = ({
+  tasks,
+  setTasks,
+  selectedTasks,
+  toggleSelectTask,
+}: {
+  tasks: Task[];
+  setTasks: Dispatch<SetStateAction<Task[]>>;
+  selectedTasks: string[];
+  toggleSelectTask: (id: string) => void;
+}) => {
   return (
     <div className="flex h-full w-full gap-3">
       <Column
         title="Queue"
-        column="queue"
         headingColor="text-neutral-500"
-        cards={cards}
-        setCards={setCards}
-        selectedCards={selectedCards}
-        toggleSelectCard={toggleSelectCard}
+        tasks={tasks}
+        setTasks={setTasks}
+        selectedTasks={selectedTasks}
+        toggleSelectTask={toggleSelectTask}
       />
     </div>
   );
 };
 
 const Column = ({
-  cards,
-  column,
-  setCards,
-  selectedCards,
-  toggleSelectCard,
-}: ColumnProps & { selectedCards: string[]; toggleSelectCard: (id: string) => void }) => {
+  tasks,
+  setTasks,
+  selectedTasks,
+  toggleSelectTask,
+}: ColumnProps & {
+  selectedTasks: string[];
+  toggleSelectTask: (id: string) => void;
+}) => {
   const [active, setActive] = useState(false);
 
-  const handleDragStart = (e: React.DragEvent<HTMLDivElement>, card: QueueCard) => {
-    e.dataTransfer.setData("cardId", card.id);
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>, task: Task) => {
+    e.dataTransfer.setData("taskId", task.id);
   };
 
   const handleDragEnd = (e: React.DragEvent<HTMLDivElement>) => {
-    const cardId = e.dataTransfer.getData("cardId");
+    const taskId = e.dataTransfer.getData("taskId");
     setActive(false);
     clearHighlights();
     const indicators = getIndicators();
     const { element } = getNearestIndicator(e, indicators);
     const before = element.dataset.before || "-1";
-    if (before !== cardId) {
-      let copy = [...cards];
-      let cardToTransfer = copy.find((c) => c.id === cardId);
-      if (!cardToTransfer) return;
-      cardToTransfer = { ...cardToTransfer, column };
-      copy = copy.filter((c) => c.id !== cardId);
+    if (before !== taskId) {
+      let copy = [...tasks];
+      const taskToTransfer = copy.find((t) => t.id === taskId);
+      if (!taskToTransfer) return;
+      copy = copy.filter((t) => t.id !== taskId);
       const moveToBack = before === "-1";
       if (moveToBack) {
-        copy.push(cardToTransfer);
+        copy.push(taskToTransfer);
       } else {
         const insertAtIndex = copy.findIndex((el) => el.id === before);
         if (insertAtIndex === undefined) return;
-        copy.splice(insertAtIndex, 0, cardToTransfer);
+        copy.splice(insertAtIndex, 0, taskToTransfer);
       }
-      setCards(copy);
+      setTasks(copy);
     }
   };
 
@@ -139,7 +156,10 @@ const Column = ({
     el.element.style.opacity = "1";
   };
 
-  const getNearestIndicator = (e: React.DragEvent<HTMLElement>, indicators: HTMLElement[]) => {
+  const getNearestIndicator = (
+    e: React.DragEvent<HTMLElement>,
+    indicators: HTMLElement[]
+  ) => {
     const DISTANCE_OFFSET = 50;
     const el = indicators.reduce(
       (closest, child) => {
@@ -160,15 +180,15 @@ const Column = ({
   };
 
   const getIndicators = (): HTMLElement[] => {
-    return Array.from(document.querySelectorAll(`[data-column="${column}"]`)) as HTMLElement[];
+    return Array.from(
+      document.querySelectorAll(`[data-column="queue"]`)
+    ) as HTMLElement[];
   };
 
   const handleDragLeave = () => {
     clearHighlights();
     setActive(false);
   };
-
-  const filteredCards = cards.filter((c) => c.column === column);
 
   return (
     <div className="w-full shrink-0">
@@ -177,47 +197,77 @@ const Column = ({
         onDrop={handleDragEnd}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
-        className={`h-full w-full transition-colors ${active ? "bg-neutral-800/50" : "bg-neutral-800/0"}`}
+        className={`h-full w-full transition-colors ${
+          active ? "bg-neutral-800/50" : "bg-neutral-800/0"
+        }`}
       >
-        {filteredCards.map((c) => {
+        {tasks.map((task) => {
+          if (!task.skill) {
+            return null; // If task.skill is undefined or null, don't render anything for this task.
+          }
+
           return (
             <Card
-              key={c.id}
-              {...c}
+              skillName={task.skill.skillName} // Safely access task.skill.skillName
+              {...task}
+              key={task.id}
               handleDragStart={handleDragStart}
-              isSelected={selectedCards.includes(c.id)}  // Pass the selected state to Card
-              toggleSelectCard={toggleSelectCard}  // Pass the toggle function to Card
+              isSelected={selectedTasks.includes(task.id)} // Pass the selected state to Card
+              toggleSelectTask={toggleSelectTask} // Pass the toggle function to Card
             />
           );
         })}
-        <DropIndicator beforeId={null} column={column} />
+        <DropIndicator beforeId={null} column="queue" />
       </div>
     </div>
   );
 };
 
 interface CardProps {
-  title: string;
+  skillName: string;
+  level?: number;
+  duration?: Date;
+  pluginName: string;
   id: string;
-  column: string;
-  handleDragStart: (e: React.DragEvent<HTMLDivElement>, card: QueueCard) => void;
+  handleDragStart: (e: React.DragEvent<HTMLDivElement>, task: Task) => void;
   isSelected: boolean;
-  toggleSelectCard: (id: string) => void;
+  toggleSelectTask: (id: string) => void;
 }
 
-const Card = ({ title, id, column, handleDragStart, isSelected, toggleSelectCard }: CardProps) => {
+const Card = ({
+  skillName,
+  level,
+  duration,
+  pluginName,
+  id,
+  handleDragStart,
+  isSelected,
+  toggleSelectTask,
+}: CardProps) => {
+  const text =
+    skillName +
+    " " +
+    (level
+      ? "to level " + level
+      : duration
+      ? "until " + duration
+      : "too N/A ") +
+    " via " +
+    pluginName;
   return (
     <>
-      <DropIndicator beforeId={id} column={column} />
+      <DropIndicator beforeId={id} column="queue" />
       <motion.div
         layout
         layoutId={id}
         draggable="true"
-        onDragStart={(e) => handleDragStart(e, { title, id, column })}
-        onClick={() => toggleSelectCard(id)} // Handle card selection toggle on click
-        className={`cursor-grab rounded border p-3 active:cursor-grabbing ${isSelected ? 'bg-neutral-700' : 'bg-neutral-800'}`}
+        onDragStart={(e) => handleDragStart(e, { skillName, id })}
+        onClick={() => toggleSelectTask(id)} // Handle card selection toggle on click
+        className={`cursor-grab rounded border p-3 active:cursor-grabbing ${
+          isSelected ? "bg-neutral-700" : "bg-neutral-800"
+        }`}
       >
-        <p className="text-sm text-neutral-100">{title}</p>
+        <p className="text-sm text-neutral-100">{text}</p>
       </motion.div>
     </>
   );
@@ -237,9 +287,5 @@ const DropIndicator = ({ beforeId, column }: DropIndicatorProps) => {
     />
   );
 };
-
-// TODO: Buttons to do (Modify (import/export, add/remove to queue), deploy (send to cloud, rate limit this)
-// TODO: Move add/remove card to where queue is
-// TODO: Attach a skill to Card (to display icon, as well as lvl target/duration)
 
 export default QueueContainer;
