@@ -85,7 +85,7 @@ const Account = () => {
         className="relative inline-flex h-10 w-10 items-center justify-center rounded-lg 
   border border-border bg-background/50 hover:bg-accent 
   transition-colors duration-200"
-        title="Current theme: system"
+        title="Account management"
         onClick={toggleDropdown}
       >
         <svg

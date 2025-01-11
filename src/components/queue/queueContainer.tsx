@@ -22,18 +22,51 @@ export interface Button {
 }
 
 const QueueContainer = ({ cards, setCards }: { cards: QueueCard[], setCards: React.Dispatch<React.SetStateAction<QueueCard[]>> }) => {
+  const [selectedCards, setSelectedCards] = useState<string[]>([]);
+
+  const toggleSelectCard = (id: string) => {
+    setSelectedCards((prevSelected) => {
+      if (prevSelected.includes(id)) {
+        return prevSelected.filter((selectedId) => selectedId !== id); // Deselect if already selected
+      } else {
+        return [...prevSelected, id]; // Select if not selected
+      }
+    });
+  };
+
+  const handleRemoveSelectedCards = () => {
+    setCards((prevCards) => prevCards.filter((card) => !selectedCards.includes(card.id))); // Remove selected cards
+    setSelectedCards([]); // Clear selected cards after removal
+  };
+
   return (
     <Dropdown
       title="Queue"
       icon={<ChevronIcon isOpen={false} />}
-      content={<Board cards={cards} setCards={setCards} />}
+      content={
+        <Board 
+          cards={cards} 
+          setCards={setCards} 
+          selectedCards={selectedCards} 
+          toggleSelectCard={toggleSelectCard} 
+        />
+      }
+      buttons={
+        selectedCards.length > 0 // Show the "Remove" button only if there are selected cards
+          ? [
+              {
+                label: "Remove",
+                onClick: handleRemoveSelectedCards, // Attach removal function
+              },
+            ]
+          : undefined
+      }
     />
   );
 };
 
-const Board = ({ cards, setCards }: { cards: QueueCard[]; setCards: Dispatch<SetStateAction<QueueCard[]>> }) => {
+const Board = ({ cards, setCards, selectedCards, toggleSelectCard }: { cards: QueueCard[]; setCards: Dispatch<SetStateAction<QueueCard[]>>; selectedCards: string[]; toggleSelectCard: (id: string) => void }) => {
   return (
-    // <div className="flex h-full w-full gap-3 p-12">
     <div className="flex h-full w-full gap-3">
       <Column
         title="Queue"
@@ -41,6 +74,8 @@ const Board = ({ cards, setCards }: { cards: QueueCard[]; setCards: Dispatch<Set
         headingColor="text-neutral-500"
         cards={cards}
         setCards={setCards}
+        selectedCards={selectedCards}
+        toggleSelectCard={toggleSelectCard}
       />
     </div>
   );
@@ -50,44 +85,36 @@ const Column = ({
   cards,
   column,
   setCards,
-}: ColumnProps) => {
+  selectedCards,
+  toggleSelectCard,
+}: ColumnProps & { selectedCards: string[]; toggleSelectCard: (id: string) => void }) => {
   const [active, setActive] = useState(false);
 
-  const handleDragStart = (e: React.DragEvent<HTMLDivElement>, card: Card) => {
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>, card: QueueCard) => {
     e.dataTransfer.setData("cardId", card.id);
   };
 
   const handleDragEnd = (e: React.DragEvent<HTMLDivElement>) => {
     const cardId = e.dataTransfer.getData("cardId");
-
     setActive(false);
     clearHighlights();
-
     const indicators = getIndicators();
     const { element } = getNearestIndicator(e, indicators);
-
     const before = element.dataset.before || "-1";
-
     if (before !== cardId) {
       let copy = [...cards];
-
       let cardToTransfer = copy.find((c) => c.id === cardId);
       if (!cardToTransfer) return;
       cardToTransfer = { ...cardToTransfer, column };
-
       copy = copy.filter((c) => c.id !== cardId);
-
       const moveToBack = before === "-1";
-
       if (moveToBack) {
         copy.push(cardToTransfer);
       } else {
         const insertAtIndex = copy.findIndex((el) => el.id === before);
         if (insertAtIndex === undefined) return;
-
         copy.splice(insertAtIndex, 0, cardToTransfer);
       }
-
       setCards(copy);
     }
   };
@@ -100,7 +127,6 @@ const Column = ({
 
   const clearHighlights = () => {
     const indicators = getIndicators();
-
     indicators.forEach((i) => {
       i.style.opacity = "0";
     });
@@ -108,23 +134,17 @@ const Column = ({
 
   const highlightIndicator = (e: React.DragEvent<HTMLElement>) => {
     const indicators = getIndicators();
-
     clearHighlights();
-
     const el = getNearestIndicator(e, indicators);
-
     el.element.style.opacity = "1";
   };
 
   const getNearestIndicator = (e: React.DragEvent<HTMLElement>, indicators: HTMLElement[]) => {
     const DISTANCE_OFFSET = 50;
-
     const el = indicators.reduce(
       (closest, child) => {
         const box = child.getBoundingClientRect();
-
         const offset = e.clientY - (box.top + DISTANCE_OFFSET);
-
         if (offset < 0 && offset > closest.offset) {
           return { offset: offset, element: child };
         } else {
@@ -136,7 +156,6 @@ const Column = ({
         element: indicators[indicators.length - 1],
       }
     );
-
     return el;
   };
 
@@ -153,8 +172,7 @@ const Column = ({
 
   return (
     <div className="w-full shrink-0">
-      <div className="flex items-center justify-between">
-      </div>
+      <div className="flex items-center justify-between"></div>
       <div
         onDrop={handleDragEnd}
         onDragOver={handleDragOver}
@@ -162,7 +180,15 @@ const Column = ({
         className={`h-full w-full transition-colors ${active ? "bg-neutral-800/50" : "bg-neutral-800/0"}`}
       >
         {filteredCards.map((c) => {
-          return <Card key={c.id} {...c} handleDragStart={handleDragStart} />;
+          return (
+            <Card
+              key={c.id}
+              {...c}
+              handleDragStart={handleDragStart}
+              isSelected={selectedCards.includes(c.id)}  // Pass the selected state to Card
+              toggleSelectCard={toggleSelectCard}  // Pass the toggle function to Card
+            />
+          );
         })}
         <DropIndicator beforeId={null} column={column} />
       </div>
@@ -175,9 +201,11 @@ interface CardProps {
   id: string;
   column: string;
   handleDragStart: (e: React.DragEvent<HTMLDivElement>, card: QueueCard) => void;
+  isSelected: boolean;
+  toggleSelectCard: (id: string) => void;
 }
 
-const Card = ({ title, id, column, handleDragStart }: CardProps) => {
+const Card = ({ title, id, column, handleDragStart, isSelected, toggleSelectCard }: CardProps) => {
   return (
     <>
       <DropIndicator beforeId={id} column={column} />
@@ -186,7 +214,8 @@ const Card = ({ title, id, column, handleDragStart }: CardProps) => {
         layoutId={id}
         draggable="true"
         onDragStart={(e) => handleDragStart(e, { title, id, column })}
-        className="cursor-grab rounded border border-neutral-700 bg-neutral-800 p-3 active:cursor-grabbing"
+        onClick={() => toggleSelectCard(id)} // Handle card selection toggle on click
+        className={`cursor-grab rounded border p-3 active:cursor-grabbing ${isSelected ? 'bg-neutral-700' : 'bg-neutral-800'}`}
       >
         <p className="text-sm text-neutral-100">{title}</p>
       </motion.div>

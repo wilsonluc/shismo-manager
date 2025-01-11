@@ -52,7 +52,7 @@ const SkillContainer = () => {
                 key={skill.skill} // Unique key for each Card component
                 skill={skill.skill}
                 level={skill.level}
-                image={`/assets/${skill.skill.toLowerCase()}.png`}
+                image={`/assets/skills/${skill.skill.toLowerCase()}.png`}
               />
             ))}
           </div>
