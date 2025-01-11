@@ -58,7 +58,10 @@ const Account = () => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false); // Close the dropdown if clicked outside
       }
     };
@@ -90,20 +93,18 @@ const Account = () => {
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
+          width="20"
+          height="20"
           viewBox="0 0 24 24"
           fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="lucide lucide-menu h-[1.2rem] w-[1.2rem] absolute transition-all duration-300
-    scale-100 rotate-0 opacity-100 text-blue-500"
+          stroke="#4a90e2"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
         >
-          <line x1="3" x2="21" y1="6" y2="6"></line>
-          <line x1="3" x2="21" y1="12" y2="12"></line>
-          <line x1="3" x2="21" y1="18" y2="18"></line>
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
         </svg>
         <span className="sr-only">Toggle theme</span>
       </button>
@@ -128,25 +129,21 @@ const Account = () => {
               </li>
             ) : (
               <>
-              <li>
-                <button
-                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full"
-                  onClick={logout}
-                >
-                  Logout of Discord
-                </button>
-              </li>
                 <li>
                   <button
                     className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full"
+                    onClick={logout}
                   >
+                    Logout of Discord
+                  </button>
+                </li>
+                <li>
+                  <button className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full">
                     Character 1
                   </button>
                 </li>
                 <li>
-                  <button
-                    className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full"
-                  >
+                  <button className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full">
                     Character 2
                   </button>
                 </li>
