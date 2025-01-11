@@ -4,7 +4,7 @@ import React, { Dispatch, SetStateAction, useState } from "react";
 import { motion } from "framer-motion";
 import ChevronIcon from "../dropdown/chevronIcon";
 import Dropdown from "../dropdown/dropdown";
-import { QueueCard } from "../../app/page";
+import { QueueCard } from "./queue";
 
 // Define types for Card and ColumnProps
 

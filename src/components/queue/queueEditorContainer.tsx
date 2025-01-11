@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import ChevronIcon from "../dropdown/chevronIcon";
 import Dropdown from "../dropdown/dropdown";
-import { QueueCard } from "../../app/page";
+import { QueueCard } from "./queue";
 
 // Define a form component inside the QueueEditorContainer
 const QueueEditorContainer = ({ setCards }: { setCards: React.Dispatch<React.SetStateAction<QueueCard[]>> }) => {

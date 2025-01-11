@@ -18,7 +18,7 @@ const Queue = () => {
 
 // TODO: MOVE QUEUE TO SEPARATE CLASS
 
-interface QueueCard {
+export interface QueueCard {
     id: string;
     title: string;
     column: string;

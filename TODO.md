@@ -15,7 +15,7 @@
 
 **Roadmap**:
 - ~~Login~~
-- Rearrange scheduled queue
+- ~~Rearrange scheduled queue~~
 - Multi-account management via overlay
 - Add/rearrange/remove tasks in scheduled queue (skill, level or duration, method)
 - Import/export to local file
