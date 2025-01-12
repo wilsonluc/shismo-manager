@@ -1,6 +1,7 @@
 import { useState } from "react";
 import QueueContainer from "./queueContainer";
 import QueueEditorContainer from "./queueEditorContainer";
+import { getSkillBySkillName, Skill } from "./skill";
 
 const Queue = () => {
   // State for cards
@@ -14,13 +15,6 @@ const Queue = () => {
   );
 };
 
-// TODO: MOVE QUEUE TO SEPARATE CLASS
-
-export interface Skill {
-  skillName: string;
-  iconPath: string;
-}
-
 export interface Task {
   id: string;
   skill?: Skill;
@@ -28,42 +22,6 @@ export interface Task {
   duration?: Date;
   pluginName: string;
 }
-
-const generateSkill = (name: string): Skill => {
-  return {
-    skillName: name,
-    iconPath: `/assets/skills/${name.toLowerCase()}.svg`,
-  };
-};
-
-const skills: Skill[] = [
-  generateSkill("Agility"),
-  generateSkill("Attack"),
-  generateSkill("Construction"),
-  generateSkill("Cooking"),
-  generateSkill("Crafting"),
-  generateSkill("Defence"),
-  generateSkill("Firemaking"),
-  generateSkill("Fishing"),
-  generateSkill("Fletching"),
-  generateSkill("Herblore"),
-  generateSkill("Hitpoints"),
-  generateSkill("Hunter"),
-  generateSkill("Magic"),
-  generateSkill("Mining"),
-  generateSkill("Prayer"),
-  generateSkill("Ranged"),
-  generateSkill("Runecrafting"),
-  generateSkill("Slayer"),
-  generateSkill("Smithing"),
-  generateSkill("Strength"),
-  generateSkill("Thieving"),
-  generateSkill("Woodcutting"),
-];
-
-export const getSkillBySkillName = (skillName: string): Skill | undefined => {
-  return skills.find((skill) => skill.skillName === skillName);
-};
 
 export const generateRandomString = (length: number): string => {
   const characters =
