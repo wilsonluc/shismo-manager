@@ -19,7 +19,7 @@ export interface Task {
   id: string;
   skill?: Skill;
   level?: number;
-  duration?: Date;
+  duration?: number; // Minutes
   pluginName: string;
 }
 

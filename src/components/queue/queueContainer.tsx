@@ -226,7 +226,7 @@ const Column = ({
 interface CardProps {
   skillName: string;
   level?: number;
-  duration?: Date;
+  duration?: number;
   pluginName: string;
   id: string;
   handleDragStart: (e: React.DragEvent<HTMLDivElement>, task: Task) => void;
@@ -250,7 +250,7 @@ const Card = ({
     (level
       ? "to level " + level
       : duration
-      ? "until " + duration
+      ? "for " + duration + " minutes"
       : "too N/A ") +
     " via " +
     pluginName;

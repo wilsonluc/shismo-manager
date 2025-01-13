@@ -13,14 +13,16 @@ const QueueEditorContainer = ({
 }) => {
   const [getSkillName, setSkillName] = useState("");
   const [getLevel, setLevel] = useState("");
+  const [getDuration, setDuration] = useState("");
   const [getPlugin, setPlugin] = useState("");
+  
   const [showSkillIcons, setShowSkillIcons] = useState(false);
   const [showPlugins, setShowPlugins] = useState(false);
+  const [showLevelDuration, setShowLevelDuration] = useState(false);
 
   const handleAddCard = () => {
     // If fields are empty
     if (!getSkillName.trim()) return;
-    if (!getLevel.trim()) return;
     if (!getPlugin.trim()) return;
 
     // Validate skill
@@ -29,23 +31,35 @@ const QueueEditorContainer = ({
       return;
     }
 
-    // Validate level
-    const level = Number.parseInt(getLevel);
-    if (!level) {
-      return;
-    }
-
     const newCard: Task = {
       id: generateRandomString(10),
       skill: skill,
-      level: level,
       pluginName: getPlugin,
     };
 
+    if (getLevel.trim()) {
+      const level = Number.parseInt(getLevel);
+      if (!level) {
+        // TODO: Handle error
+        return;
+      }
+      newCard.level = level; // Use level if provided
+    } else if (getDuration.trim()) {
+      const duration = Number.parseInt(getDuration);
+      if (isNaN(duration) || duration <= 0) {
+        // TODO: Handle error
+        return;
+      }
+      newCard.duration = duration; // Use duration if provided
+    } else {
+        // TODO: Handle error
+    }
+
     setTasks((prevCards) => [...prevCards, newCard]);
-    setSkillName("");
-    setLevel("");
-    setPlugin("");
+    // Don't need to reset
+    // setSkillName("");
+    // setLevel("");
+    // setPlugin("");
   };
 
   return (
@@ -55,11 +69,12 @@ const QueueEditorContainer = ({
       content={
         <div>
           <div className="flex gap-1">
-            {/* Skill Selector Button */}
+            {/* Skill */}
             <button
               onClick={() => {
                 setShowSkillIcons((prev) => !prev);
                 setShowPlugins(false);
+                setShowLevelDuration(false);
               }} // Toggle the visibility of icons
               className={`w-full p-2 mb-4 border border-neutral-500 rounded h-10 ${
                 showSkillIcons
@@ -70,11 +85,12 @@ const QueueEditorContainer = ({
               Select Skill
             </button>
 
-            {/* Plugin Input */}
+            {/* Plugin */}
             <button
               onClick={() => {
                 setShowSkillIcons(false);
                 setShowPlugins((prev) => !prev);
+                setShowLevelDuration(false);
               }} // Toggle the visibility of icons
               className={`w-full p-2 mb-4 border border-neutral-500 rounded h-10 ${
                 showPlugins ? "bg-blue-500 text-white" : "bg-black text-white"
@@ -83,14 +99,21 @@ const QueueEditorContainer = ({
               Select Plugin
             </button>
 
-            {/* Level Input */}
-            <input
-              type="text"
-              value={getLevel}
-              onChange={(e) => setLevel(e.target.value)}
-              placeholder="Level"
-              className="w-full p-2 mb-4 border border-neutral-500 rounded text-black h-10"
-            />
+            {/* Level/Duration */}
+            <button
+              onClick={() => {
+                setShowSkillIcons(false);
+                setShowPlugins(false);
+                setShowLevelDuration((prev) => !prev);
+              }} // Toggle the visibility of icons
+              className={`w-full p-2 mb-4 border border-neutral-500 rounded h-10 ${
+                showLevelDuration
+                  ? "bg-blue-500 text-white"
+                  : "bg-black text-white"
+              }`} // Change button color based on skill selection
+            >
+              Level/Duration
+            </button>
           </div>
 
           <div className="mb-4">
@@ -134,6 +157,37 @@ const QueueEditorContainer = ({
                     <p>{plugin}</p>
                   </div>
                 ))}
+              </div>
+            )}
+
+            {/* Select Level/Duration */}
+            {showLevelDuration && (
+              <div className="flex flex-col gap-2">
+                {/* Level Input */}
+                <label htmlFor="level" className="text-white">
+                  Target Level:
+                </label>
+                <input
+                  id="level"
+                  type="number"
+                  value={getLevel}
+                  onChange={(e) => setLevel(e.target.value)}
+                  className="w-full p-2 border border-neutral-500 rounded text-black"
+                  placeholder="Enter target level"
+                />
+
+                {/* Duration Input (in minutes or hours) */}
+                <label htmlFor="duration" className="text-white">
+                  Duration (hours):
+                </label>
+                <input
+                  id="duration"
+                  type="text"
+                  value={getDuration}
+                  onChange={(e) => setDuration(e.target.value)}
+                  className="w-full p-2 border border-neutral-500 rounded text-black"
+                  placeholder="Enter duration (minutes)"
+                />
               </div>
             )}
           </div>
