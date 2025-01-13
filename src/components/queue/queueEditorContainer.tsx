@@ -4,6 +4,7 @@ import Dropdown from "../dropdown/dropdown";
 import { generateRandomString, Task } from "./queue";
 import { getSkillBySkillName, skills } from "./skill";
 import { plugins } from "./plugin";
+import Image from "next/image";
 
 // Define a form component inside the QueueEditorContainer
 const QueueEditorContainer = ({
@@ -14,6 +15,7 @@ const QueueEditorContainer = ({
   const [getSkillName, setSkillName] = useState("");
   const [getLevel, setLevel] = useState("");
   const [getPlugin, setPlugin] = useState("");
+  const [showSkillIcons, setShowSkillIcons] = useState(false); // State to toggle skill icons visibility
 
   const handleAddCard = () => {
     // If fields are empty
@@ -53,23 +55,18 @@ const QueueEditorContainer = ({
       icon={<ChevronIcon isOpen={false} />} // Default not open
       content={
         <div>
-          {/* <div className="flex"> */}
-          <div className="p-4">
-            {/*Skill*/}
-            <select
-              value={getSkillName}
-              onChange={(e) => setSkillName(e.target.value)}
-              className="w-full p-2 mb-4 border border-neutral-500 rounded text-black h-10"
+          <div className="flex">
+            {/* Skill Selector Button */}
+            <button
+              onClick={() => setShowSkillIcons((prev) => !prev)} // Toggle the visibility of icons
+              className={`w-full p-2 mb-4 border border-neutral-500 rounded h-10 ${
+                showSkillIcons ? "bg-blue-500 text-white" : "bg-white text-black"
+              }`} // Change button color based on skill selection
             >
-              <option value="">Skill</option>
-              {skills.map((skill) => (
-                <option key={skill.skillName} value={skill.skillName}>
-                  {skill.skillName}
-                </option>
-              ))}
-            </select>
+              Select Skill
+            </button>
 
-            {/*Level*/}
+            {/* Level Input */}
             <input
               type="text"
               value={getLevel}
@@ -78,7 +75,7 @@ const QueueEditorContainer = ({
               className="w-full p-2 mb-4 border border-neutral-500 rounded text-black h-10"
             />
 
-            {/*Plugin*/}
+            {/* Plugin Input */}
             <select
               value={getPlugin}
               onChange={(e) => setPlugin(e.target.value)}
@@ -91,6 +88,34 @@ const QueueEditorContainer = ({
                 </option>
               ))}
             </select>
+          </div>
+
+          {/* This is where the skill icons will go */}
+          <div className="mb-4">
+            {showSkillIcons && (
+              <div className="skill-icons-container grid grid-cols-3 gap-2">
+                {skills.map((skill) => (
+                  <div
+                    key={skill.skillName}
+                    onClick={() => setSkillName(skill.skillName)} // Set skill when clicked
+                    className={`skill-icon cursor-pointer p-2 text-center border border-neutral-300 rounded ${
+                      getSkillName === skill.skillName
+                        ? "bg-blue-500 text-white" // Highlight selected skill
+                        : ""
+                    }`}
+                  >
+                    <Image
+                      src={skill.iconPath} // Assuming each skill has an `iconPath` field
+                      alt={skill.skillName}
+                      width={32} // The width of the image (adjust as needed)
+                      height={32} // The height of the image (adjust as needed)
+                      className="mx-auto" // Centering the image horizontally
+                    />
+                    <p>{skill.skillName}</p> {/* Display skill name under the icon */}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <button
@@ -106,4 +131,3 @@ const QueueEditorContainer = ({
 };
 
 export default QueueEditorContainer;
-// TODO: Drag functionality doesn't work on mobile
