@@ -172,6 +172,7 @@ const QueueEditorContainer = ({
                   type="number"
                   value={getLevel}
                   onChange={(e) => setLevel(e.target.value)}
+                  disabled={getDuration !== ""}
                   className="w-full p-2 border border-neutral-500 rounded text-black"
                   placeholder="Enter target level"
                 />
@@ -185,6 +186,7 @@ const QueueEditorContainer = ({
                   type="text"
                   value={getDuration}
                   onChange={(e) => setDuration(e.target.value)}
+                  disabled={getLevel !== ""}
                   className="w-full p-2 border border-neutral-500 rounded text-black"
                   placeholder="Enter duration (minutes)"
                 />
