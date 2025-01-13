@@ -6,7 +6,7 @@ export interface Skill {
 export const generateSkill = (name: string): Skill => {
   return {
     skillName: name,
-    iconPath: `/assets/skills/${name.toLowerCase()}.svg`,
+    iconPath: `/assets/skills/${name.toLowerCase()}.png`,
   };
 };
 
