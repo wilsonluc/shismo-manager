@@ -170,6 +170,11 @@ const QueueEditorContainer = ({
                 <input
                   id="level"
                   type="number"
+                  onKeyDown={(e) => {
+                    if (e.key === 'e' || e.key === 'E' || e.key === '-' || e.key === '.') {
+                      e.preventDefault();
+                    }
+                  }}
                   value={getLevel}
                   onChange={(e) => setLevel(e.target.value)}
                   disabled={getDuration !== ""}
@@ -179,11 +184,16 @@ const QueueEditorContainer = ({
 
                 {/* Duration Input (in minutes or hours) */}
                 <label htmlFor="duration" className="text-white">
-                  Duration (hours):
+                  Duration (minutes):
                 </label>
                 <input
                   id="duration"
-                  type="text"
+                  type="number"
+                  onKeyDown={(e) => {
+                    if (e.key === 'e' || e.key === 'E' || e.key === '-' || e.key === '.') {
+                      e.preventDefault();
+                    }
+                  }}
                   value={getDuration}
                   onChange={(e) => setDuration(e.target.value)}
                   disabled={getLevel !== ""}
