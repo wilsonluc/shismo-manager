@@ -1,11 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { AgGridReact } from "ag-grid-react";
 import { Task } from "./queue";
 import Image from "next/image";
 import Dropdown from "../dropdown/dropdown";
 import ChevronIcon from "../dropdown/chevronIcon";
 
-import { ModuleRegistry, ColDef } from "ag-grid-community";
+import {
+  ModuleRegistry,
+  ColDef,
+  GridReadyEvent,
+  RowDragEvent,
+  RowDropZoneParams,
+} from "ag-grid-community";
 import {
   CellStyleModule,
   ClientSideRowModelModule,
@@ -75,6 +81,9 @@ const GridExample: React.FC<GridExampleProps> = ({ tasks }) => {
     },
   ]);
 
+  const trashAreaRef = useRef<HTMLDivElement | null>(null);
+  const [rowData, setRowData] = useState(tasks);
+
   return (
     <div>
       <Dropdown
@@ -82,29 +91,53 @@ const GridExample: React.FC<GridExampleProps> = ({ tasks }) => {
         icon={<ChevronIcon isOpen={false} />}
         content={
           <div>
-            {/*Trash area*/}
+            {/* Trash area */}
             <div
+              ref={trashAreaRef}
               style={{
-                minHeight: "150px",
+                minHeight: "10px",
                 border: "1px solid #ccc",
                 backgroundColor: "#f9f9f9",
                 padding: "10px",
                 marginTop: "10px",
-                color: "black"
+                color: "black",
               }}
-              onDragOver={(e) => e.preventDefault()} // Allow drop by preventing default action
+              onDragOver={(e) => e.preventDefault()}
             >
               <span>Drag here to remove task</span>
             </div>
 
-            {/*Queue area*/}
+            {/* Queue area */}
             <AgGridReact
               rowModelType="clientSide"
               columnDefs={colDefs}
-              rowData={tasks}
+              rowData={rowData}
               animateRows={true} // Animate rows when reordered
               domLayout="autoHeight"
               rowDragManaged={true} // Allow row dragging
+              onGridReady={(params: GridReadyEvent) => {
+                const gridApi = params.api;
+
+                // Add drop zone logic
+                const dropZone: RowDropZoneParams = {
+                  getContainer: () => {
+                    if (trashAreaRef.current) {
+                      return trashAreaRef.current;
+                    }
+                    throw new Error("Trash area container is not available");
+                  },
+                  onDragStop: (dragEvent: RowDragEvent) => {
+                    console.log("Dragged Row Data: ", dragEvent.node.data);
+
+                    // If a drop happened on the trash area, remove the row from the grid
+                    setRowData((prevData) =>
+                      prevData.filter((task) => task !== dragEvent.node.data)
+                    );
+                  },
+                };
+
+                gridApi.addRowDropZone(dropZone);
+              }}
             />
           </div>
         }
