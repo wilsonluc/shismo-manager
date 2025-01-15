@@ -1,7 +1,7 @@
 import { useState } from "react";
-import QueueContainer from "./queueContainer";
 import QueueEditorContainer from "./queueEditorContainer";
 import { getSkillBySkillName, Skill } from "./skill";
+import GridExample from "./gridExample";
 
 const Queue = () => {
   // State for cards
@@ -9,7 +9,7 @@ const Queue = () => {
 
   return (
     <div>
-      <QueueContainer tasks={tasks} setTasks={setTasks} />
+      <GridExample tasks={tasks} />
       <QueueEditorContainer setTasks={setTasks} />
     </div>
   );
@@ -17,7 +17,7 @@ const Queue = () => {
 
 export interface Task {
   id: string;
-  skill?: Skill;
+  skill: Skill;
   level?: number;
   duration?: number; // Minutes
   pluginName: string;
@@ -51,6 +51,12 @@ const DEFAULT_CARDS: Task[] = [
     skill: getSkillBySkillName("Hunter"),
     level: 70,
     pluginName: "Hunters' Rumours",
+    id: generateRandomString(10),
+  },
+  {
+    skill: getSkillBySkillName("Slayer"),
+    level: 90,
+    pluginName: "Slayer",
     id: generateRandomString(10),
   },
 ];

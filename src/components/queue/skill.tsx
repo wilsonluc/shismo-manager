@@ -58,6 +58,7 @@ export const skills: Skill[] = [
   woodcutting,
 ];
 
-export const getSkillBySkillName = (skillName: string): Skill | undefined => {
-  return skills.find((skill) => skill.skillName === skillName);
+export const getSkillBySkillName = (skillName: string): Skill => {
+  const skill = skills.find((skill) => skill.skillName === skillName);
+  return skill || woodcutting;
 };
