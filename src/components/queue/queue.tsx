@@ -55,7 +55,7 @@ const DEFAULT_CARDS: Task[] = [
   },
   {
     skill: getSkillBySkillName("Slayer"),
-    level: 90,
+    duration: 50,
     pluginName: "Slayer",
     id: generateRandomString(10),
   },

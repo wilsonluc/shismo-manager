@@ -5,6 +5,8 @@ import Image from "next/image";
 import Dropdown from "../dropdown/dropdown";
 import ChevronIcon from "../dropdown/chevronIcon";
 
+import { colorSchemeDarkBlue, themeQuartz } from "ag-grid-community";
+
 import {
   ModuleRegistry,
   ColDef,
@@ -50,10 +52,11 @@ const GridExample: React.FC<GridExampleProps> = ({ tasks }) => {
         ) : null;
       },
       rowDrag: true,
-      maxWidth: 100,
+      flex: 0.5,
       headerName: "Skill",
       sortable: false,
       lockPosition: true,
+      resizable: false,
     },
     {
       field: "duration",
@@ -67,22 +70,27 @@ const GridExample: React.FC<GridExampleProps> = ({ tasks }) => {
         }
         return "";
       },
-      maxWidth: 180,
-      headerName: "Level/Duration (mins)",
+      flex: 0.5,
+      headerName: "Level / \nDuration",
       sortable: false,
       lockPosition: true,
+      resizable: false,
     },
     {
       field: "pluginName",
-      maxWidth: 150,
+      flex: 1,
       headerName: "Plugin Name",
       sortable: false,
       lockPosition: true,
+      resizable: false,
     },
   ]);
 
   const trashAreaRef = useRef<HTMLDivElement | null>(null);
   const [rowData, setRowData] = useState(tasks);
+  const rowDragText = () => {
+    return "";  // Return an empty string to disable the row drag text
+  };
 
   return (
     <div>
@@ -91,20 +99,13 @@ const GridExample: React.FC<GridExampleProps> = ({ tasks }) => {
         icon={<ChevronIcon isOpen={false} />}
         content={
           <div>
-            {/* Trash area */}
+            {/* Remove area */}
             <div
               ref={trashAreaRef}
-              style={{
-                minHeight: "10px",
-                border: "1px solid #ccc",
-                backgroundColor: "#f9f9f9",
-                padding: "10px",
-                marginTop: "10px",
-                color: "black",
-              }}
+              className="inline-block p-2 mb-2 border border-neutral-500 rounded h-10 text-white bg-red-500"
               onDragOver={(e) => e.preventDefault()}
             >
-              <span>Drag here to remove task</span>
+              Drag here to remove
             </div>
 
             {/* Queue area */}
@@ -115,6 +116,7 @@ const GridExample: React.FC<GridExampleProps> = ({ tasks }) => {
               animateRows={true} // Animate rows when reordered
               domLayout="autoHeight"
               rowDragManaged={true} // Allow row dragging
+              rowDragText={rowDragText}
               onGridReady={(params: GridReadyEvent) => {
                 const gridApi = params.api;
 
@@ -138,6 +140,8 @@ const GridExample: React.FC<GridExampleProps> = ({ tasks }) => {
 
                 gridApi.addRowDropZone(dropZone);
               }}
+
+              theme={themeQuartz.withPart(colorSchemeDarkBlue)}
             />
           </div>
         }
