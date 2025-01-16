@@ -1,290 +1,157 @@
-"use client";
-
-import React, { Dispatch, SetStateAction, useState } from "react";
-import { motion } from "framer-motion";
-import ChevronIcon from "../dropdown/chevronIcon";
+import React, { useState, useRef } from "react";
+import { AgGridReact } from "ag-grid-react";
+import { Task } from "./queue";
+import Image from "next/image";
 import Dropdown from "../dropdown/dropdown";
-import { Task } from "./queue"; // Import Task type from the previous file
+import ChevronIcon from "../dropdown/chevronIcon";
 
-// Define types for Task and ColumnProps
+import { colorSchemeDarkBlue, themeQuartz } from "ag-grid-community";
 
-interface ColumnProps {
-  title: string;
-  headingColor: string;
-  tasks: Task[]; // Using Task[] directly instead of QueueCard[]
-  setTasks: Dispatch<SetStateAction<Task[]>>; // Changed from QueueCard[] to Task[]
-}
+import {
+  ModuleRegistry,
+  ColDef,
+  GridReadyEvent,
+  RowDragEvent,
+  RowDropZoneParams,
+} from "ag-grid-community";
+import {
+  CellStyleModule,
+  ClientSideRowModelModule,
+  DragAndDropModule,
+  ValidationModule,
+  RowDragModule,
+} from "ag-grid-community";
 
-export interface Button {
-  label: string;
-  onClick: () => void; // The onClick function
-}
+ModuleRegistry.registerModules([
+  CellStyleModule,
+  ClientSideRowModelModule,
+  DragAndDropModule,
+  ValidationModule,
+  RowDragModule,
+]);
 
-const QueueContainer = ({
-  tasks,
-  setTasks,
-}: {
+interface QueueContainerProps {
   tasks: Task[];
   setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
-}) => {
-  const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
+}
 
-  const toggleSelectTask = (id: string) => {
-    setSelectedTasks((prevSelected) => {
-      if (prevSelected.includes(id)) {
-        return prevSelected.filter((selectedId) => selectedId !== id); // Deselect if already selected
-      } else {
-        return [...prevSelected, id]; // Select if not selected
-      }
-    });
-  };
+const QueueContainer: React.FC<QueueContainerProps> = ({ tasks, setTasks }) => {
+  const [colDefs] = useState<ColDef<Task>[]>([
+    {
+      field: "skill",
+      cellRenderer: (params: { data: { skill: { iconPath: string } } }) => {
+        const iconPath =
+          params.data && params.data.skill ? params.data.skill.iconPath : "";
+        return iconPath ? (
+          <Image
+            src={iconPath}
+            alt="Skill Icon"
+            width={30}
+            height={30}
+            objectFit="cover"
+          />
+        ) : null;
+      },
+      rowDrag: true,
+      flex: 0.5,
+      headerName: "Skill",
+      sortable: false,
+      lockPosition: true,
+      resizable: false,
+    },
+    {
+      field: "duration",
+      valueGetter: (params) => {
+        if (params.data) {
+          if (params.data.level) {
+            return "Lv. " + params.data.level;
+          } else if (params.data.duration) {
+            return params.data.duration + " mins";
+          }
+        }
+        return "";
+      },
+      flex: 0.5,
+      headerName: "Level / \nDuration",
+      sortable: false,
+      lockPosition: true,
+      resizable: false,
+    },
+    {
+      field: "pluginName",
+      flex: 1,
+      headerName: "Plugin Name",
+      sortable: false,
+      lockPosition: true,
+      resizable: false,
+    },
+  ]);
 
-  const handleRemoveSelectedTasks = () => {
-    setTasks((prevTasks) =>
-      prevTasks.filter((task) => !selectedTasks.includes(task.id))
-    ); // Remove selected tasks
-    setSelectedTasks([]); // Clear selected tasks after removal
+  const trashAreaRef = useRef<HTMLDivElement | null>(null);
+  // const [rowData, setRowData] = useState(tasks);
+  const rowDragText = () => {
+    return "";  // Return an empty string to disable the row drag text
   };
 
   return (
-    <Dropdown
-      title="Queue"
-      icon={<ChevronIcon isOpen={false} />}
-      content={
-        <Board
-          tasks={tasks}
-          setTasks={setTasks}
-          selectedTasks={selectedTasks}
-          toggleSelectTask={toggleSelectTask}
-        />
-      }
-      buttons={
-        selectedTasks.length > 0 // Show the "Remove" button only if there are selected tasks
-          ? [
-              {
-                label: "Remove",
-                onClick: handleRemoveSelectedTasks, // Attach removal function
-              },
-            ]
-          : undefined
-      }
-    />
-  );
-};
-
-const Board = ({
-  tasks,
-  setTasks,
-  selectedTasks,
-  toggleSelectTask,
-}: {
-  tasks: Task[];
-  setTasks: Dispatch<SetStateAction<Task[]>>;
-  selectedTasks: string[];
-  toggleSelectTask: (id: string) => void;
-}) => {
-  return (
-    <div className="flex h-full w-full gap-3">
-      <Column
+    <div>
+      <Dropdown
         title="Queue"
-        headingColor="text-neutral-500"
-        tasks={tasks}
-        setTasks={setTasks}
-        selectedTasks={selectedTasks}
-        toggleSelectTask={toggleSelectTask}
+        icon={<ChevronIcon isOpen={false} />}
+        content={
+          <div>
+            {/* Remove area */}
+            <div
+              ref={trashAreaRef}
+              className="inline-block p-2 mb-2 border border-neutral-500 rounded h-10 text-white bg-dullred select-none"
+              onDragOver={(e) => e.preventDefault()}
+            >
+              Drag here to remove
+            </div>
+
+            {/* Queue area */}
+            <AgGridReact
+              rowModelType="clientSide"
+              columnDefs={colDefs}
+              rowData={tasks}
+              animateRows={true} // Animate rows when reordered
+              domLayout="autoHeight"
+              rowDragManaged={true} // Allow row dragging
+              rowDragText={rowDragText}
+              onGridReady={(params: GridReadyEvent) => {
+                const gridApi = params.api;
+
+                // Add drop zone logic
+                const dropZone: RowDropZoneParams = {
+                  getContainer: () => {
+                    if (trashAreaRef.current) {
+                      return trashAreaRef.current;
+                    }
+                    throw new Error("Trash area container is not available");
+                  },
+                  onDragStop: (dragEvent: RowDragEvent) => {
+                    console.log("Dragged Row Data: ", dragEvent.node.data);
+
+                    // If a drop happened on the trash area, remove the row from the grid
+                    setTasks((prevTasks) => {
+                      const updatedTasks = prevTasks.filter((task) => task !== dragEvent.node.data);
+                      tasks = updatedTasks;
+                      return updatedTasks;
+                    });
+
+                    // tasks.forEach((task) => console.log(task.pluginName));
+                  },
+                };
+
+                gridApi.addRowDropZone(dropZone);
+              }}
+
+              theme={themeQuartz.withPart(colorSchemeDarkBlue)}
+            />
+          </div>
+        }
       />
     </div>
-  );
-};
-
-const Column = ({
-  tasks,
-  setTasks,
-  selectedTasks,
-  toggleSelectTask,
-}: ColumnProps & {
-  selectedTasks: string[];
-  toggleSelectTask: (id: string) => void;
-}) => {
-  const [active, setActive] = useState(false);
-
-  const handleDragStart = (e: React.DragEvent<HTMLDivElement>, task: Task) => {
-    e.dataTransfer.setData("taskId", task.id);
-  };
-
-  const handleDragEnd = (e: React.DragEvent<HTMLDivElement>) => {
-    const taskId = e.dataTransfer.getData("taskId");
-    setActive(false);
-    clearHighlights();
-    const indicators = getIndicators();
-    const { element } = getNearestIndicator(e, indicators);
-    const before = element.dataset.before || "-1";
-    if (before !== taskId) {
-      let copy = [...tasks];
-      const taskToTransfer = copy.find((t) => t.id === taskId);
-      if (!taskToTransfer) return;
-      copy = copy.filter((t) => t.id !== taskId);
-      const moveToBack = before === "-1";
-      if (moveToBack) {
-        copy.push(taskToTransfer);
-      } else {
-        const insertAtIndex = copy.findIndex((el) => el.id === before);
-        if (insertAtIndex === undefined) return;
-        copy.splice(insertAtIndex, 0, taskToTransfer);
-      }
-      setTasks(copy);
-    }
-  };
-
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    highlightIndicator(e);
-    setActive(true);
-  };
-
-  const clearHighlights = () => {
-    const indicators = getIndicators();
-    indicators.forEach((i) => {
-      i.style.opacity = "0";
-    });
-  };
-
-  const highlightIndicator = (e: React.DragEvent<HTMLElement>) => {
-    const indicators = getIndicators();
-    clearHighlights();
-    const el = getNearestIndicator(e, indicators);
-    el.element.style.opacity = "1";
-  };
-
-  const getNearestIndicator = (
-    e: React.DragEvent<HTMLElement>,
-    indicators: HTMLElement[]
-  ) => {
-    const DISTANCE_OFFSET = 50;
-    const el = indicators.reduce(
-      (closest, child) => {
-        const box = child.getBoundingClientRect();
-        const offset = e.clientY - (box.top + DISTANCE_OFFSET);
-        if (offset < 0 && offset > closest.offset) {
-          return { offset: offset, element: child };
-        } else {
-          return closest;
-        }
-      },
-      {
-        offset: Number.NEGATIVE_INFINITY,
-        element: indicators[indicators.length - 1],
-      }
-    );
-    return el;
-  };
-
-  const getIndicators = (): HTMLElement[] => {
-    return Array.from(
-      document.querySelectorAll(`[data-column="queue"]`)
-    ) as HTMLElement[];
-  };
-
-  const handleDragLeave = () => {
-    clearHighlights();
-    setActive(false);
-  };
-
-  return (
-    <div className="w-full shrink-0">
-      <div className="flex items-center justify-between"></div>
-      <div
-        onDrop={handleDragEnd}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        className={`h-full w-full transition-colors ${
-          active ? "bg-neutral-800/50" : "bg-neutral-800/0"
-        }`}
-      >
-        {tasks.map((task) => {
-          if (!task.skill) {
-            return null; // If task.skill is undefined or null, don't render anything for this task.
-          }
-
-          return (
-            <Card
-              skillName={task.skill.skillName} // Safely access task.skill.skillName
-              {...task}
-              key={task.id}
-              handleDragStart={handleDragStart}
-              isSelected={selectedTasks.includes(task.id)} // Pass the selected state to Card
-              toggleSelectTask={toggleSelectTask} // Pass the toggle function to Card
-            />
-          );
-        })}
-        <DropIndicator beforeId={null} column="queue" />
-      </div>
-    </div>
-  );
-};
-
-interface CardProps {
-  skillName: string;
-  level?: number;
-  duration?: number;
-  pluginName: string;
-  id: string;
-  handleDragStart: (e: React.DragEvent<HTMLDivElement>, task: Task) => void;
-  isSelected: boolean;
-  toggleSelectTask: (id: string) => void;
-}
-
-const Card = ({
-  skillName,
-  level,
-  duration,
-  pluginName,
-  id,
-  handleDragStart,
-  isSelected,
-  toggleSelectTask,
-}: CardProps) => {
-  const text =
-    skillName +
-    " " +
-    (level
-      ? "to level " + level
-      : duration
-      ? "for " + duration + " minutes"
-      : "too N/A ") +
-    " via " +
-    pluginName;
-  return (
-    <>
-      <DropIndicator beforeId={id} column="queue" />
-      <motion.div
-        layout
-        layoutId={id}
-        draggable="true"
-        onDragStart={(e) => handleDragStart(e, { skillName, id })}
-        onClick={() => toggleSelectTask(id)} // Handle card selection toggle on click
-        className={`cursor-grab rounded border p-3 active:cursor-grabbing ${
-          isSelected ? "bg-neutral-700" : "bg-neutral-800"
-        }`}
-      >
-        <p className="text-sm text-neutral-100">{text}</p>
-      </motion.div>
-    </>
-  );
-};
-
-interface DropIndicatorProps {
-  beforeId?: string | null;
-  column: string;
-}
-
-const DropIndicator = ({ beforeId, column }: DropIndicatorProps) => {
-  return (
-    <div
-      data-before={beforeId || "-1"}
-      data-column={column}
-      className="my-0.5 h-0.5 w-full bg-violet-400 opacity-0"
-    />
   );
 };
 

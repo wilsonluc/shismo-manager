@@ -1,7 +1,7 @@
 import { useState } from "react";
 import QueueEditorContainer from "./queueEditorContainer";
 import { getSkillBySkillName, Skill } from "./skill";
-import GridExample from "./gridExample";
+import QueueContainer from "./queueContainer";
 
 const Queue = () => {
   // State for cards
@@ -9,7 +9,7 @@ const Queue = () => {
 
   return (
     <div>
-      <GridExample tasks={tasks} />
+      <QueueContainer tasks={tasks} setTasks={setTasks} />
       <QueueEditorContainer setTasks={setTasks} />
     </div>
   );
@@ -34,7 +34,7 @@ export const generateRandomString = (length: number): string => {
   return result;
 };
 
-const DEFAULT_CARDS: Task[] = [
+export const DEFAULT_CARDS: Task[] = [
   {
     skill: getSkillBySkillName("Woodcutting"),
     level: 30,

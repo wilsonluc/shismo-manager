@@ -1,13 +1,17 @@
 // src/components/Dropdown.tsx
 
 import React, { useState } from "react";
-import { Button } from "../queue/queueContainer";
 
 interface DropdownProps {
   title: string;
   content: React.ReactNode; // Content can be anything (text, components, etc.)
   icon: React.ReactNode; // Icon that will rotate on toggle
   buttons?: Button[];
+}
+
+interface Button {
+  label: string;
+  onClick: () => void; // The onClick function
 }
 
 const Dropdown: React.FC<DropdownProps> = ({
