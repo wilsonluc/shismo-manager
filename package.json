@@ -4,7 +4,6 @@
   "private": true,
   "scripts": {
     "dev": "node server.js && next dev --turbopack",
-    "node": "node server.js",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -13,7 +12,6 @@
     "@nextui-org/react": "^2.6.11",
     "ag-grid-community": "^33.0.3",
     "ag-grid-react": "^33.0.3",
-    "aws-sdk": "^2.1692.0",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "express-session": "^1.18.1",
