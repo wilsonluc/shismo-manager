@@ -4,6 +4,7 @@ import passport from 'passport';
 import passportDiscord from 'passport-discord';
 import { config } from 'dotenv';
 import session from 'express-session';
+import { docClient } from './docClient.js';  // Make sure this path is correct
 
 config();
 
@@ -55,6 +56,41 @@ app.prepare().then(() => {
   }), (req, res) => {
     res.redirect('/');
   });
+
+
+
+  // DYNAMO
+  // Route to get user by discordID
+  server.get('/api/getUser/:discordID', async (req, res) => {
+    const DISCORD_ID = req.params.discordID;
+    const TABLE_NAME = 'shismo-manager';
+
+    // Query DynamoDB for the user with discordID
+    const params = {
+      TableName: TABLE_NAME,
+      Key: {
+        discordID: DISCORD_ID,
+      },
+    };
+
+
+    try {
+      const result = await docClient.get(params).promise();
+      
+      if (result.Item) {
+        res.status(200).json(result.Item);
+      } else {
+        res.status(404).json({ error: 'User not found' });
+      }
+    } catch (error) {
+      console.error('Error fetching user from DynamoDB', error);
+      res.status(500).json({ error: 'Error retrieving user from database' });
+    }
+  });
+
+
+
+  
 
   // Catch-all route handler for Next.js pages
   server.all('*', (req, res) => {
