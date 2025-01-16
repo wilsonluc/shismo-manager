@@ -48,10 +48,10 @@ const QueueContainer: React.FC<QueueContainerProps> = ({ tasks, setTasks }) => {
             alt="Skill Icon"
             width={30}
             height={30}
-            objectFit="cover"
           />
         ) : null;
       },
+      valueFormatter: "",
       rowDrag: true,
       flex: 0.5,
       headerName: "Skill",
