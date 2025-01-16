@@ -1,11 +1,11 @@
-const express = require('express');
-const next = require('next');
-const passport = require('passport');
-const session = require('express-session');
-const passportDiscord = require('passport-discord');
-const dotenv = require('dotenv');
+import express from 'express';
+import next from 'next';
+import passport from 'passport';
+import passportDiscord from 'passport-discord';
+import { config } from 'dotenv';
+import session from 'express-session';
 
-dotenv.config();
+config();
 
 const { Strategy: DiscordStrategy } = passportDiscord;
 const app = next({ dev: process.env.NODE_ENV !== 'production' });
@@ -14,8 +14,16 @@ const handle = app.getRequestHandler();
 app.prepare().then(() => {
   const server = express();
 
-  // Session middleware setup
-  server.use(session({ secret: 'secret', resave: false, saveUninitialized: false }));
+  // Initialize session middleware
+  server.use(session({
+    secret: 'secret',
+    resave: false,
+    saveUninitialized: false
+  }));
+
+  // Initialize passport after session middleware
+  server.use(passport.initialize());
+  server.use(passport.session());
 
   // Passport Discord strategy setup
   passport.use(new DiscordStrategy({
@@ -27,11 +35,9 @@ app.prepare().then(() => {
     return done(null, profile);
   }));
 
+  // Serialize and deserialize user
   passport.serializeUser((user, done) => done(null, user));
   passport.deserializeUser((user, done) => done(null, user));
-
-  server.use(passport.initialize());
-  server.use(passport.session());
 
   // Route to fetch user data
   server.get('/api/user', (req, res) => {
