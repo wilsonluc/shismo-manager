@@ -1,0 +1,16 @@
+{
+    "resource": "/user/{discordID}",
+    "path": "/user/12345",
+    "httpMethod": "GET",
+    "queryStringParameters": {},
+    "pathParameters": {
+      "discordID": "12345"
+    },
+    "headers": {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    "body": null,
+    "isBase64Encoded": false
+  }
+  

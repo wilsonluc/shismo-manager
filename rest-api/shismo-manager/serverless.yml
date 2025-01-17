@@ -1,0 +1,41 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: shismomanager
+# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+app: shismo-manager
+# "service" is the name of this project. This will also be added to your AWS resource names.
+service: shismo-manager
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  profile: default
+  region: eu-west-2
+
+package:
+  individually: true
+
+functions:
+  hello:
+    handler: handler.hello
+    events:
+      - httpApi:
+          path: /user/{discordID}
+          method: get
+
+resources:
+  Resources:
+    ShismoManagerTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: discordID
+            AttributeType: S
+          - AttributeName: characterName
+            AttributeType: S
+        KeySchema:
+          - AttributeName: discordID
+            KeyType: HASH
+          - AttributeName: characterName
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+        TableName: shismo-manager
