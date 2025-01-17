@@ -2,13 +2,20 @@
 
 import React, { useEffect, useState, useRef } from "react";
 
+const GET_CHAR_NAMES_ENDPOINT_PREFIX =
+  "https://t4ak3a4sye.execute-api.eu-west-2.amazonaws.com/user/"; // TODO: Move to constants global
+
 const Account = () => {
   const [user, setUser] = useState<any>(null); // Store the user object
   const [loading, setLoading] = useState(true); // To manage loading state
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null); // Reference to the dropdown menu
 
+  const [characters, setCharacters] = useState<string[]>([]); // Store character names from dynamoDB
+
   const toggleDropdown = () => {
+    console.log(characters);
+
     setIsOpen(!isOpen);
   };
 
@@ -22,6 +29,21 @@ const Account = () => {
         // If the user is authenticated, store the user data in state
         if (data.user) {
           setUser(data.user);
+
+          // Fetch from dynamoDB
+          const charResponse = await fetch(
+            GET_CHAR_NAMES_ENDPOINT_PREFIX + data.user.id,
+            {
+              method: "GET",
+              headers: {
+                // "Content-Type": "application/json",
+                // "Access-Control-Allow-Origin": "*",
+                // "Access-Control-Allow-Methods": "POST,PATCH,OPTIONS",
+              },
+            }
+          );
+          const charData = await charResponse.json();
+          setCharacters(charData.characterNames || []);
         } else {
           setUser(null); // If the user is not authenticated, set user to null
         }
@@ -137,16 +159,13 @@ const Account = () => {
                     Logout of Discord
                   </button>
                 </li>
-                <li>
-                  <button className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full">
-                    Character 1
-                  </button>
-                </li>
-                <li>
-                  <button className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full">
-                    Character 2
-                  </button>
-                </li>
+                {characters.map((character, index) => (
+                  <li key={index}>
+                    <button className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full">
+                      {character}
+                    </button>
+                  </li>
+                ))}
               </>
             )}
           </ul>

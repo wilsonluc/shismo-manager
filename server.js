@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import next from 'next';
 import passport from 'passport';
 import passportDiscord from 'passport-discord';
@@ -13,6 +14,13 @@ const handle = app.getRequestHandler();
 
 app.prepare().then(() => {
   const server = express();
+
+  // Enable CORS
+  server.use(cors({
+    origin: 'http://localhost:3000', // Adjust this to your frontend URL
+    methods: ['GET', 'POST', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+  }));
 
   // Initialize session middleware
   server.use(session({

@@ -100,9 +100,13 @@ Make sure to CD in here first
 
 
 Params in table:
-discordID (partition/primary key)
+licenseKey (partition/primary key)
 characterName (sort key)
+isJagexAccount: bool
 
-taskData: string (contains queue)
-isLoggedIn:
-lastTask:
+isLoggedIn: bool
+currentTask: id of task in queue
+tasks: (string of all tasks - queue)
+loadedPlugins (string of all loaded plugins)
+skill levels: string of levels
+

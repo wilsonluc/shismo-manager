@@ -1,37 +1,41 @@
-'use strict';
+"use strict";
 
-const AWS = require('aws-sdk');
+const AWS = require("aws-sdk");
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
-module.exports.hello = async event => {
+module.exports.hello = async (event) => {
   try {
     // Extract discordID from the event path parameters
     const discordID = event.pathParameters.discordID;
-    
+
     // Query DynamoDB to fetch the character names for the given discordID
     const params = {
-      TableName: 'shismo-manager',
-      KeyConditionExpression: '#discordID = :discordID',
+      TableName: "shismo-manager",
+      KeyConditionExpression: "#discordID = :discordID",
       ExpressionAttributeNames: {
-        '#discordID': 'discordID',  // Partition key
+        "#discordID": "discordID", // Partition key
       },
       ExpressionAttributeValues: {
-        ':discordID': discordID,  // discordID from the event
+        ":discordID": discordID, // discordID from the event
       },
     };
-    
+
     // Perform the query to DynamoDB
     const data = await dynamoDb.query(params).promise();
-    
+
     // Check if we found any items
     if (data.Items && data.Items.length > 0) {
-      const characterNames = data.Items.map(item => item.characterName);
-      
+      const characterNames = data.Items.map((item) => item.characterName);
+
       return {
         statusCode: 200,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Credentials": true,
+        },
         body: JSON.stringify(
           {
-            message: 'Character names fetched successfully',
+            message: "Character names fetched successfully",
             characterNames: characterNames,
           },
           null,
@@ -43,7 +47,7 @@ module.exports.hello = async event => {
         statusCode: 404,
         body: JSON.stringify(
           {
-            message: 'No character names found for the given Discord ID',
+            message: "No character names found for the given Discord ID",
           },
           null,
           2
@@ -55,7 +59,7 @@ module.exports.hello = async event => {
       statusCode: 500,
       body: JSON.stringify(
         {
-          message: 'Error fetching character names',
+          message: "Error fetching character names",
           error: error.message,
         },
         null,
