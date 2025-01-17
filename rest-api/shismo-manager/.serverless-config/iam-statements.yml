@@ -1,0 +1,21 @@
+- Effect: Allow
+  Action:
+    - lambda:InvokeFunction
+  Resource: arn:aws:lambda:${aws:region}:${aws:accountId}:function:*
+- Effect: 'Allow'
+  Action:
+    - 'dynamodb:PutItem'
+    - 'dynamodb:Get*'
+    - 'dynamodb:Scan*'
+    - 'dynamodb:UpdateItem'
+    - 'dynamodb:DeleteItem'
+    - 'dynamodb:Query*'
+  Resource: 
+    - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${param:dynamodbName}
+- Effect: Allow
+  Resource:
+    - arn:aws:s3:::shismo-loader-secure-jars/*
+    - arn:aws:s3:::shismo-loader-secure-jars
+  Action:
+    - s3:GetObject
+    - s3:ListBucket

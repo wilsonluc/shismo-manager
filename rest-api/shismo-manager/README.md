@@ -97,3 +97,12 @@ Make sure to CD in here first
 `npm i` to install modules
 `serverless deploy` to deploy as lambda function (may need to login via aws first)
 `serverless invoke local --function hello --path event.json` to test API
+
+
+Params in table:
+discordID (partition/primary key)
+characterName (sort key)
+
+taskData: string (contains queue)
+isLoggedIn:
+lastTask:

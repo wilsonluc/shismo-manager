@@ -10,6 +10,13 @@ provider:
   runtime: nodejs18.x
   profile: default
   region: eu-west-2
+  iam:
+    role:
+      statements: ${file(./.serverless-config/iam-statements.yml)}
+
+params:
+  default:
+    dynamodbName: shismo-manager
 
 package:
   individually: true
