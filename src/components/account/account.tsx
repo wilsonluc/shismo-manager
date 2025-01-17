@@ -11,7 +11,9 @@ const Account: React.FC<AccountProps> = ({ setCharacterName }) => {
   const [user, setUser] = useState<any>(null); // Store the user object
   const [loading, setLoading] = useState(true); // To manage loading state
   const [isOpen, setIsOpen] = useState(false);
+
   const dropdownRef = useRef<HTMLDivElement | null>(null); // Reference to the dropdown menu
+  const buttonRef = useRef<HTMLButtonElement | null>(null); // Reference to the account management button
 
   const [characters, setCharacters] = useState<string[]>([]); // Store character names from dynamoDB
 
@@ -31,9 +33,7 @@ const Account: React.FC<AccountProps> = ({ setCharacterName }) => {
           setUser(data.user);
 
           // Fetch from dynamoDB
-          const charResponse = await fetch(
-            ENDPOINT + data.user.id,
-          );
+          const charResponse = await fetch(ENDPOINT + data.user.id);
           const charData = await charResponse.json();
           setCharacters(charData.characterNames || []);
         } else {
@@ -75,31 +75,29 @@ const Account: React.FC<AccountProps> = ({ setCharacterName }) => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
         dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
+        !dropdownRef.current.contains(event.target as Node) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target as Node)
       ) {
-        setIsOpen(false); // Close the dropdown if clicked outside
+        setIsOpen(false);
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside); // Listen for outside clicks
+    document.addEventListener("mousedown", handleClickOutside);
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside); // Cleanup event listener on unmount
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
   if (loading) {
     return <div>Loading...</div>; // Show loading state while fetching user data
   }
-
-  // TODO: Discord login here
-  // if (!user) {
-  //   return <div>Please log in to switch accounts.</div>; // Prompt to log in if no user is found
-  // }
-
+  
   return (
     <div className="absolute top-0 right-0">
       <button
+        ref={buttonRef}
         className="relative inline-flex h-10 w-10 items-center justify-center rounded-lg 
   border border-border bg-background/50 hover:bg-accent 
   transition-colors duration-200"
@@ -149,7 +147,7 @@ const Account: React.FC<AccountProps> = ({ setCharacterName }) => {
                     className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full"
                     onClick={logout}
                   >
-                    Logout of Discord
+                    Logout
                   </button>
                 </li>
                 {characters.map((character, index) => (

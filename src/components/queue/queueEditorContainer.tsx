@@ -117,10 +117,10 @@ const QueueEditorContainer = ({
             </button>
           </div>
 
-          <div className="mb-4">
+          <div>
             {/* Select Skill */}
             {showSkillIcons && (
-              <div className="skill-icons-container grid grid-cols-3 gap-2">
+              <div className="skill-icons-container grid grid-cols-3 gap-2 mb-4">
                 {skills.map((skill) => (
                   <div
                     key={skill.skillName}
@@ -146,7 +146,7 @@ const QueueEditorContainer = ({
 
             {/* Select Plugin */}
             {showPlugins && (
-              <div className="skill-icons-container grid grid-cols-2 gap-2">
+              <div className="skill-icons-container grid grid-cols-2 gap-2 mb-4">
                 {plugins.map((plugin) => (
                   <div
                     key={plugin}
@@ -163,7 +163,7 @@ const QueueEditorContainer = ({
 
             {/* Select Level/Duration */}
             {showLevelDuration && (
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2 mb-4">
                 {/* Level Input */}
                 <label htmlFor="level" className="text-white">
                   Target Level:

@@ -114,6 +114,7 @@ const QueueContainer: React.FC<QueueContainerProps> = ({ tasks, setTasks }) => {
             <AgGridReact
               rowModelType="clientSide"
               columnDefs={colDefs}
+              overlayNoRowsTemplate={"No tasks in queue"}
               rowData={tasks}
               animateRows={true} // Animate rows when reordered
               domLayout="autoHeight"
