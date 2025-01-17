@@ -66,6 +66,7 @@ const QueueEditorContainer = ({
     <Dropdown
       title="Queue Editor"
       icon={<ChevronIcon isOpen={false} />}
+      defaultOpen={true}
       content={
         <div>
           <div className="flex gap-1">

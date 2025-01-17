@@ -97,6 +97,7 @@ const QueueContainer: React.FC<QueueContainerProps> = ({ tasks, setTasks }) => {
     <div>
       <Dropdown
         title="Queue"
+        defaultOpen={true}
         icon={<ChevronIcon isOpen={false} />}
         content={
           <div>

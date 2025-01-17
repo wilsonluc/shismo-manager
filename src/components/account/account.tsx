@@ -32,15 +32,7 @@ const Account = () => {
 
           // Fetch from dynamoDB
           const charResponse = await fetch(
-            GET_CHAR_NAMES_ENDPOINT_PREFIX + data.user.id,
-            {
-              method: "GET",
-              headers: {
-                // "Content-Type": "application/json",
-                // "Access-Control-Allow-Origin": "*",
-                // "Access-Control-Allow-Methods": "POST,PATCH,OPTIONS",
-              },
-            }
+            GET_CHAR_NAMES_ENDPOINT_PREFIX + data.user.id,{method: "GET"}
           );
           const charData = await charResponse.json();
           setCharacters(charData.characterNames || []);

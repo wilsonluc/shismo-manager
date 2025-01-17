@@ -7,6 +7,7 @@ interface DropdownProps {
   content: React.ReactNode; // Content can be anything (text, components, etc.)
   icon: React.ReactNode; // Icon that will rotate on toggle
   buttons?: Button[];
+  defaultOpen?: boolean;
 }
 
 interface Button {
@@ -18,9 +19,10 @@ const Dropdown: React.FC<DropdownProps> = ({
   title,
   content,
   icon,
-  buttons,
+  // buttons,
+  defaultOpen = false, // Default to false if not provided
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(defaultOpen);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -43,7 +45,7 @@ const Dropdown: React.FC<DropdownProps> = ({
             </div>
           </button>
           <h2 className="text-base font-semibold text-foreground">{title}</h2>
-          {buttons && (
+          {/* {buttons && (
             <div className="flex gap-2 pl-2">
               {buttons.map((button, index) => (
                 <button
@@ -55,7 +57,7 @@ const Dropdown: React.FC<DropdownProps> = ({
                 </button>
               ))}
             </div>
-          )}
+          )} */}
         </div>
       </div>
 
