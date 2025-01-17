@@ -64,6 +64,22 @@ app.prepare().then(() => {
     res.redirect('/');
   });
 
+  // Logout
+  server.post('/api/logout', (req, res) => {
+    req.logout((err) => {
+      if (err) {
+        return res.status(500).json({ message: "Failed to log out" });
+      }
+      // Clear the session
+      req.session.destroy((err) => {
+        if (err) {
+          return res.status(500).json({ message: "Failed to destroy session" });
+        }
+        res.status(200).json({ message: "Logged out successfully" });
+      });
+    });
+  });
+
   // Catch-all route handler for Next.js pages
   server.all('*', (req, res) => {
     return handle(req, res);

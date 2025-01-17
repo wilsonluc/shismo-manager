@@ -61,6 +61,7 @@ const Account: React.FC<AccountProps> = ({ setCharacterName }) => {
 
       if (response.ok) {
         setUser(null); // Clear the user state
+        setCharacterName(""); // Clear the character name
         window.location.href = "/"; // Redirect to homepage or login page
       } else {
         console.error("Failed to log out");
