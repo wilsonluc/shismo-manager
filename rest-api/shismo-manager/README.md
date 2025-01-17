@@ -95,7 +95,8 @@ When you are done developing, don't forget to run `serverless deploy` to deploy 
 Make sure to CD in here first
 
 `npm i` to install modules
-`serverless deploy` to deploy as lambda function (may need to login via aws first)
+`serverless remove --verbose` if things go wrong and need to undeploy
+`serverless deploy --verbose` to deploy as lambda function (may need to login via aws first)
 `serverless invoke local --function hello --path event.json` to test API
 
 

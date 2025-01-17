@@ -1,0 +1,1 @@
+export const ENDPOINT = "https://g0dbtgrsfc.execute-api.eu-west-2.amazonaws.com/user/";

@@ -1,11 +1,43 @@
-import { useState } from "react";
 import QueueEditorContainer from "./queueEditorContainer";
-import { getSkillBySkillName, Skill } from "./skill";
+import { getSkillBySkillName } from "./skill";
 import QueueContainer from "./queueContainer";
+import { Task } from "../../app/page";
+import { useEffect } from "react";
+import { ENDPOINT } from "../../app/constants";
 
-const Queue = () => {
-  // State for cards
-  const [tasks, setTasks] = useState<Task[]>(DEFAULT_CARDS);
+interface QueueProps {
+  tasks: Task[];
+  setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
+  characterName: string;
+}
+
+const Queue: React.FC<QueueProps> = ({ tasks, setTasks, characterName }) => {
+  useEffect(() => {
+    // Fetch the user data from the /api/user route
+    const fetchTasks = async () => {
+      try {
+        const response = await fetch("/api/user");
+        const data = await response.json();
+
+        if (data.user && characterName) {
+          const tasksResponse = await fetch(
+            ENDPOINT + data.user.id + "/" + characterName
+          );
+          const tasksJson = await tasksResponse.json();
+          const tasksString = tasksJson.tasks;
+          if (tasksString === "") {
+            setTasks([]);
+          } else {
+            setTasks(parseTasksStringToJson(tasksString));
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching user/characterName data:", error);
+      }
+    };
+
+    fetchTasks();
+  });
 
   return (
     <div>
@@ -14,14 +46,6 @@ const Queue = () => {
     </div>
   );
 };
-
-export interface Task {
-  id: string;
-  skill: Skill;
-  level?: number;
-  duration?: number; // Minutes
-  pluginName: string;
-}
 
 export const generateRandomString = (length: number): string => {
   const characters =
@@ -60,5 +84,18 @@ export const DEFAULT_CARDS: Task[] = [
     id: generateRandomString(10),
   },
 ];
+
+export function parseTasksJsonToString(tasks: Task[]): string {
+  return JSON.stringify(tasks, null, 2);
+}
+
+export function parseTasksStringToJson(tasksString: string): Task[] {
+  try {
+    return JSON.parse(tasksString);
+  } catch (error) {
+    console.error("Error parsing tasks string:", error);
+    return [];
+  }
+}
 
 export default Queue;

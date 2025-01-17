@@ -1,9 +1,50 @@
 "use client";
 
-const Sync = () => {
+import { parse } from "path";
+import { Task } from "../../app/page";
+import { parseTasksJsonToString } from "../queue/queue";
+import { getSkillBySkillName } from "../queue/skill";
+
+const SET_TASKS_ENDPOINT =
+  "https://g0dbtgrsfc.execute-api.eu-west-2.amazonaws.com/user/"; // TODO: Move to constants global
+
+interface SyncProps {
+  tasks: Task[];
+  setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
+  characterName: string;
+}
+
+const Sync: React.FC<SyncProps> = ({ tasks, setTasks, characterName }) => {
+  const createCharacter = () => {
+    const task: Task = {
+      id: "123",
+      skill: getSkillBySkillName("Woodcutting"),
+      level: 30,
+      pluginName: "Skiller",
+    };
+
+    const tasksJson = parseTasksJsonToString([task]);
+
+    console.log(tasksJson);
+
+    
+
+    // Send request
+
+    return;
+  }
+
+  const updateTasks = () => {
+    // console.log(accountName);
+    console.log(parseTasksJsonToString(tasks));
+    console.log(tasks);
+    return;
+  };
+
   return (
     <div className="absolute top-0 right-12">
       <button
+        onClick={createCharacter}
         className="relative inline-flex h-10 w-10 items-center justify-center rounded-lg    border border-border bg-background/50 hover:bg-accent    transition-colors duration-200"
         title="Sync with cloud"
       >

@@ -1,11 +1,13 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
+import { ENDPOINT } from "../../app/constants";
 
-const GET_CHAR_NAMES_ENDPOINT_PREFIX =
-  "https://t4ak3a4sye.execute-api.eu-west-2.amazonaws.com/user/"; // TODO: Move to constants global
+interface AccountProps {
+  setCharacterName: React.Dispatch<React.SetStateAction<string>>;
+}
 
-const Account = () => {
+const Account: React.FC<AccountProps> = ({ setCharacterName }) => {
   const [user, setUser] = useState<any>(null); // Store the user object
   const [loading, setLoading] = useState(true); // To manage loading state
   const [isOpen, setIsOpen] = useState(false);
@@ -14,8 +16,6 @@ const Account = () => {
   const [characters, setCharacters] = useState<string[]>([]); // Store character names from dynamoDB
 
   const toggleDropdown = () => {
-    console.log(characters);
-
     setIsOpen(!isOpen);
   };
 
@@ -32,7 +32,7 @@ const Account = () => {
 
           // Fetch from dynamoDB
           const charResponse = await fetch(
-            GET_CHAR_NAMES_ENDPOINT_PREFIX + data.user.id,{method: "GET"}
+            ENDPOINT + data.user.id,
           );
           const charData = await charResponse.json();
           setCharacters(charData.characterNames || []);
@@ -153,7 +153,13 @@ const Account = () => {
                 </li>
                 {characters.map((character, index) => (
                   <li key={index}>
-                    <button className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full">
+                    <button
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full"
+                      onClick={() => {
+                        setCharacterName(character);
+                        setIsOpen(false);
+                      }}
+                    >
                       {character}
                     </button>
                   </li>

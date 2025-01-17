@@ -1,6 +1,5 @@
 import React, { useState, useRef } from "react";
 import { AgGridReact } from "ag-grid-react";
-import { Task } from "./queue";
 import Image from "next/image";
 import Dropdown from "../dropdown/dropdown";
 import ChevronIcon from "../dropdown/chevronIcon";
@@ -21,6 +20,7 @@ import {
   ValidationModule,
   RowDragModule,
 } from "ag-grid-community";
+import { Task } from "../../app/page";
 
 ModuleRegistry.registerModules([
   CellStyleModule,

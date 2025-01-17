@@ -13,6 +13,9 @@ provider:
   iam:
     role:
       statements: ${file(./.serverless-config/iam-statements.yml)}
+  httpApi:
+    shouldStartNameWithService: true
+    cors: true
 
 params:
   default:
@@ -22,11 +25,18 @@ package:
   individually: true
 
 functions:
-  hello:
-    handler: handler.hello
+  getUser:
+    handler: handler.getUser
     events:
       - httpApi:
           path: /user/{discordID}
+          method: get
+          
+  getTasks:
+    handler: handler.getTasks
+    events:
+      - httpApi:
+          path: /user/{discordID}/{characterName}
           method: get
 
 resources:
