@@ -37,7 +37,7 @@ const Queue: React.FC<QueueProps> = ({ tasks, setTasks, characterName }) => {
     };
 
     fetchTasks();
-  });
+  }, [characterName, setTasks]);
 
   return (
     <div>

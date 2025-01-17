@@ -38,6 +38,13 @@ functions:
       - httpApi:
           path: /user/{discordID}/{characterName}
           method: get
+          
+  setTasks:
+    handler: handler.setTasks
+    events:
+      - httpApi:
+          path: /user/{discordID}/{characterName}
+          method: put
 
 resources:
   Resources:

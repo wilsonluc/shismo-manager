@@ -17,8 +17,8 @@ app.prepare().then(() => {
 
   // Enable CORS
   server.use(cors({
-    origin: 'http://localhost:3000', // Adjust this to your frontend URL
-    methods: ['GET', 'POST', 'PATCH', 'OPTIONS'],
+    origin: 'http://localhost:3000',
+    methods: ['GET', 'PUT', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
   }));
 

@@ -17,7 +17,7 @@ export default function Home() {
       <div className="max-w-[1920px] mx-auto relative">
         
         <Account setCharacterName={setCharacterName} />
-        <Sync tasks={tasks} setTasks={setTasks} characterName={characterName}/>
+        <Sync tasks={tasks} characterName={characterName}/>
 
         <Header />
         <Queue tasks={tasks} setTasks={setTasks} characterName={characterName}/>

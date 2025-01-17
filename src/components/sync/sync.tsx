@@ -1,50 +1,49 @@
 "use client";
 
-import { parse } from "path";
+import { ENDPOINT } from "../../app/constants";
 import { Task } from "../../app/page";
 import { parseTasksJsonToString } from "../queue/queue";
-import { getSkillBySkillName } from "../queue/skill";
-
-const SET_TASKS_ENDPOINT =
-  "https://g0dbtgrsfc.execute-api.eu-west-2.amazonaws.com/user/"; // TODO: Move to constants global
 
 interface SyncProps {
   tasks: Task[];
-  setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
   characterName: string;
 }
 
-const Sync: React.FC<SyncProps> = ({ tasks, setTasks, characterName }) => {
-  const createCharacter = () => {
-    const task: Task = {
-      id: "123",
-      skill: getSkillBySkillName("Woodcutting"),
-      level: 30,
-      pluginName: "Skiller",
-    };
+const Sync: React.FC<SyncProps> = ({ tasks, characterName }) => {
+  // Function to send the PUT request to update tasks
+  const setTasks = async () => {
+    try {
+      const response = await fetch("/api/user");
+      const data = await response.json();
 
-    const tasksJson = parseTasksJsonToString([task]);
+      if (data.user && characterName) {
+        const tasksResponse = await fetch(
+          ENDPOINT + data.user.id + "/" + characterName,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ tasks: parseTasksJsonToString(tasks) }),
+          }
+        );
 
-    console.log(tasksJson);
-
-    
-
-    // Send request
-
-    return;
-  }
-
-  const updateTasks = () => {
-    // console.log(accountName);
-    console.log(parseTasksJsonToString(tasks));
-    console.log(tasks);
-    return;
+        const tasksJson = await tasksResponse.json();
+        if (tasksResponse.ok) {
+          console.log("Tasks updated successfully:", tasksJson);
+        } else {
+          console.error("Failed to update tasks:", tasksJson);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching user/characterName data:", error);
+    }
   };
 
   return (
     <div className="absolute top-0 right-12">
       <button
-        onClick={createCharacter}
+        onClick={setTasks}
         className="relative inline-flex h-10 w-10 items-center justify-center rounded-lg    border border-border bg-background/50 hover:bg-accent    transition-colors duration-200"
         title="Sync with cloud"
       >
