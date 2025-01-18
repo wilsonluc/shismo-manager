@@ -33,7 +33,7 @@ ModuleRegistry.registerModules([
 interface QueueContainerProps {
   tasks: Task[];
   setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
-  characterName: string;
+  characterName: string | undefined;
 }
 
 const QueueContainer: React.FC<QueueContainerProps> = ({ tasks, setTasks, characterName }) => {

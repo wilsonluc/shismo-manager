@@ -1,22 +1,35 @@
 import React, { useState } from "react";
 import ChevronIcon from "../dropdown/chevronIcon";
 import Dropdown from "../dropdown/dropdown";
-import { generateRandomString, Task } from "./queue";
 import { getSkillBySkillName, skills } from "./skill";
 import { plugins } from "./plugin";
 import Image from "next/image";
+import { Task } from "../../app/page";
 
-interface QueueEditorContainerProps {
-  setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
-  characterName: string;
+function getLargestID(tasks: Task[]): string {
+  console.log(tasks);
+  if (tasks.length === 0) {
+    return "0";
+  }
+  return (Math.max(...tasks.map(task => parseInt(task.id, 10))) + 1).toString();
 }
 
-const QueueEditorContainer: React.FC<QueueEditorContainerProps> = ({ setTasks, characterName }) => {
+interface QueueEditorContainerProps {
+  tasks: Task[];
+  setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
+  characterName: string | undefined;
+}
+
+const QueueEditorContainer: React.FC<QueueEditorContainerProps> = ({
+  tasks,
+  setTasks,
+  characterName,
+}) => {
   const [getSkillName, setSkillName] = useState("");
   const [getLevel, setLevel] = useState("");
   const [getDuration, setDuration] = useState("");
   const [getPlugin, setPlugin] = useState("");
-  
+
   const [showSkillIcons, setShowSkillIcons] = useState(false);
   const [showPlugins, setShowPlugins] = useState(false);
   const [showLevelDuration, setShowLevelDuration] = useState(false);
@@ -33,7 +46,7 @@ const QueueEditorContainer: React.FC<QueueEditorContainerProps> = ({ setTasks, c
     }
 
     const newCard: Task = {
-      id: generateRandomString(10),
+      id: getLargestID(tasks),
       skill: skill,
       pluginName: getPlugin,
     };
@@ -53,14 +66,10 @@ const QueueEditorContainer: React.FC<QueueEditorContainerProps> = ({ setTasks, c
       }
       newCard.duration = duration; // Use duration if provided
     } else {
-        // TODO: Handle error
+      // TODO: Handle error
     }
 
     setTasks((prevCards) => [...prevCards, newCard]);
-    // Don't need to reset
-    // setSkillName("");
-    // setLevel("");
-    // setPlugin("");
   };
 
   return (
@@ -173,7 +182,12 @@ const QueueEditorContainer: React.FC<QueueEditorContainerProps> = ({ setTasks, c
                   id="level"
                   type="number"
                   onKeyDown={(e) => {
-                    if (e.key === 'e' || e.key === 'E' || e.key === '-' || e.key === '.') {
+                    if (
+                      e.key === "e" ||
+                      e.key === "E" ||
+                      e.key === "-" ||
+                      e.key === "."
+                    ) {
                       e.preventDefault();
                     }
                   }}
@@ -192,7 +206,12 @@ const QueueEditorContainer: React.FC<QueueEditorContainerProps> = ({ setTasks, c
                   id="duration"
                   type="number"
                   onKeyDown={(e) => {
-                    if (e.key === 'e' || e.key === 'E' || e.key === '-' || e.key === '.') {
+                    if (
+                      e.key === "e" ||
+                      e.key === "E" ||
+                      e.key === "-" ||
+                      e.key === "."
+                    ) {
                       e.preventDefault();
                     }
                   }}
@@ -209,7 +228,11 @@ const QueueEditorContainer: React.FC<QueueEditorContainerProps> = ({ setTasks, c
           <button
             onClick={handleAddCard}
             disabled={characterName === undefined}
-            className={`w-full p-2 rounded text-white ${characterName === undefined ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500'}`}
+            className={`w-full p-2 rounded text-white ${
+              characterName === undefined
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-500"
+            }`}
           >
             Add to Queue
           </button>

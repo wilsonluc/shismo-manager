@@ -42,7 +42,7 @@ const Queue: React.FC<QueueProps> = ({ tasks, setTasks, characterName }) => {
   return (
     <div>
       <QueueContainer tasks={tasks} setTasks={setTasks} characterName={characterName} />
-      <QueueEditorContainer setTasks={setTasks} characterName={characterName} />
+      <QueueEditorContainer tasks={tasks} setTasks={setTasks} characterName={characterName} />
     </div>
   );
 };
