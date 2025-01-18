@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import { ENDPOINT } from "../../app/constants";
+import { USER_ENDPOINT } from "../../app/endpoints";
 
 interface AccountProps {
-  setCharacterName: React.Dispatch<React.SetStateAction<string>>;
+  setCharacterName: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
 const Account: React.FC<AccountProps> = ({ setCharacterName }) => {
@@ -33,7 +33,7 @@ const Account: React.FC<AccountProps> = ({ setCharacterName }) => {
           setUser(data.user);
 
           // Fetch from dynamoDB
-          const charResponse = await fetch(ENDPOINT + data.user.id);
+          const charResponse = await fetch(USER_ENDPOINT + data.user.id);
           const charData = await charResponse.json();
           setCharacters(charData.characterNames || []);
         } else {
@@ -61,7 +61,7 @@ const Account: React.FC<AccountProps> = ({ setCharacterName }) => {
 
       if (response.ok) {
         setUser(null); // Clear the user state
-        setCharacterName(""); // Clear the character name
+        setCharacterName(undefined); // Clear the character name
         window.location.href = "/"; // Redirect to homepage or login page
       } else {
         console.error("Failed to log out");

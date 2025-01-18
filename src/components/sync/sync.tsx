@@ -1,12 +1,12 @@
 "use client";
 
-import { ENDPOINT } from "../../app/constants";
+import { TASKS_ENDPOINT } from "../../app/endpoints";
 import { Task } from "../../app/page";
 import { parseTasksJsonToString } from "../queue/queue";
 
 interface SyncProps {
   tasks: Task[];
-  characterName: string;
+  characterName: string | undefined;
 }
 
 const Sync: React.FC<SyncProps> = ({ tasks, characterName }) => {
@@ -18,7 +18,7 @@ const Sync: React.FC<SyncProps> = ({ tasks, characterName }) => {
 
       if (data.user && characterName) {
         const tasksResponse = await fetch(
-          ENDPOINT + data.user.id + "/" + characterName,
+          TASKS_ENDPOINT + data.user.id + "/" + characterName,
           {
             method: "PUT",
             headers: {

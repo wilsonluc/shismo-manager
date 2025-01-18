@@ -36,14 +36,14 @@ functions:
     handler: handler.getTasks
     events:
       - httpApi:
-          path: /user/{discordID}/{characterName}
+          path: /tasks/{discordID}/{characterName}
           method: get
           
   setTasks:
     handler: handler.setTasks
     events:
       - httpApi:
-          path: /user/{discordID}/{characterName}
+          path: /tasks/{discordID}/{characterName}
           method: put
 
 resources:

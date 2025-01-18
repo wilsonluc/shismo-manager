@@ -33,9 +33,10 @@ ModuleRegistry.registerModules([
 interface QueueContainerProps {
   tasks: Task[];
   setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
+  characterName: string;
 }
 
-const QueueContainer: React.FC<QueueContainerProps> = ({ tasks, setTasks }) => {
+const QueueContainer: React.FC<QueueContainerProps> = ({ tasks, setTasks, characterName }) => {
   const [colDefs] = useState<ColDef<Task>[]>([
     {
       field: "skill",
@@ -114,7 +115,7 @@ const QueueContainer: React.FC<QueueContainerProps> = ({ tasks, setTasks }) => {
             <AgGridReact
               rowModelType="clientSide"
               columnDefs={colDefs}
-              overlayNoRowsTemplate={"No tasks in queue"}
+              overlayNoRowsTemplate={(characterName === undefined) ? "Please select a character first" : "Task queue is empty"}
               rowData={tasks}
               animateRows={true} // Animate rows when reordered
               domLayout="autoHeight"
@@ -140,8 +141,6 @@ const QueueContainer: React.FC<QueueContainerProps> = ({ tasks, setTasks }) => {
                       tasks = updatedTasks;
                       return updatedTasks;
                     });
-
-                    // tasks.forEach((task) => console.log(task.pluginName));
                   },
                 };
 

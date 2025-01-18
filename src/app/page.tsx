@@ -10,7 +10,7 @@ import { Skill } from "../components/queue/skill";
 
 export default function Home() {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [characterName, setCharacterName] = useState<string>("");
+  const [characterName, setCharacterName] = useState<string | undefined>();
 
   return (
     <div className="min-h-screen bg-background p-8">
@@ -21,7 +21,7 @@ export default function Home() {
 
         <Header />
         <Queue tasks={tasks} setTasks={setTasks} characterName={characterName}/>
-        <SkillContainer />
+        {characterName !== undefined && <SkillContainer />}        
       </div>
     </div>
   );

@@ -3,12 +3,12 @@ import { getSkillBySkillName } from "./skill";
 import QueueContainer from "./queueContainer";
 import { Task } from "../../app/page";
 import { useEffect } from "react";
-import { ENDPOINT } from "../../app/constants";
+import { TASKS_ENDPOINT } from "../../app/endpoints";
 
 interface QueueProps {
   tasks: Task[];
   setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
-  characterName: string;
+  characterName: string | undefined;
 }
 
 const Queue: React.FC<QueueProps> = ({ tasks, setTasks, characterName }) => {
@@ -21,7 +21,7 @@ const Queue: React.FC<QueueProps> = ({ tasks, setTasks, characterName }) => {
 
         if (data.user && characterName) {
           const tasksResponse = await fetch(
-            ENDPOINT + data.user.id + "/" + characterName
+            TASKS_ENDPOINT + data.user.id + "/" + characterName
           );
           const tasksJson = await tasksResponse.json();
           const tasksString = tasksJson.tasks;
@@ -41,8 +41,8 @@ const Queue: React.FC<QueueProps> = ({ tasks, setTasks, characterName }) => {
 
   return (
     <div>
-      <QueueContainer tasks={tasks} setTasks={setTasks} />
-      <QueueEditorContainer setTasks={setTasks} />
+      <QueueContainer tasks={tasks} setTasks={setTasks} characterName={characterName} />
+      <QueueEditorContainer setTasks={setTasks} characterName={characterName} />
     </div>
   );
 };

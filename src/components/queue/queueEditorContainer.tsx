@@ -6,11 +6,12 @@ import { getSkillBySkillName, skills } from "./skill";
 import { plugins } from "./plugin";
 import Image from "next/image";
 
-const QueueEditorContainer = ({
-  setTasks,
-}: {
+interface QueueEditorContainerProps {
   setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
-}) => {
+  characterName: string;
+}
+
+const QueueEditorContainer: React.FC<QueueEditorContainerProps> = ({ setTasks, characterName }) => {
   const [getSkillName, setSkillName] = useState("");
   const [getLevel, setLevel] = useState("");
   const [getDuration, setDuration] = useState("");
@@ -207,7 +208,8 @@ const QueueEditorContainer = ({
 
           <button
             onClick={handleAddCard}
-            className="w-full p-2 bg-blue-500 text-white rounded"
+            disabled={characterName === undefined}
+            className={`w-full p-2 rounded text-white ${characterName === undefined ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500'}`}
           >
             Add to Queue
           </button>
