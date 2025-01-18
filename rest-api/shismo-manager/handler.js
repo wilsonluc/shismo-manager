@@ -66,6 +66,75 @@ module.exports.getUser = async (event) => {
   }
 };
 
+module.exports.getCharacter = async (event) => {
+  try {
+    // Extract discordID and characterName from the event path parameters
+    const discordID = event.pathParameters.discordID;
+    const characterName = event.pathParameters.characterName;
+
+    // Query DynamoDB to fetch the tasks for the given discordID and characterName
+    const params = {
+      TableName: "shismo-manager",
+      KeyConditionExpression:
+        "#discordID = :discordID and #characterName = :characterName",
+      ExpressionAttributeNames: {
+        "#discordID": "discordID", // Partition key
+        "#characterName": "characterName", // Sort key
+      },
+      ExpressionAttributeValues: {
+        ":discordID": discordID, // discordID from the event
+        ":characterName": characterName, // characterName from the event
+      },
+    };
+
+    // Perform the query to DynamoDB
+    const data = await dynamoDb.query(params).promise();
+
+    // Check if we found any items
+    if (data.Items && data.Items.length > 0) {
+      // Assuming 'tasks' is a string attribute in the item
+      const items = data.Items[0];
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify(
+          {
+            message: "Tasks fetched successfully",
+            item: items,
+          },
+          null,
+          2
+        ),
+      };
+    } else {
+      // No data found for the given discordID and characterName
+      return {
+        statusCode: 200,
+        body: JSON.stringify(
+          {
+            message: "No character found for the given discordID and characterName",
+            tasks: "",
+          },
+          null,
+          2
+        ),
+      };
+    }
+  } catch (error) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify(
+        {
+          message: "Error fetching tasks",
+          error: error.message,
+        },
+        null,
+        2
+      ),
+    };
+  }
+};
+
 module.exports.getTasks = async (event) => {
   try {
     // Extract discordID and characterName from the event path parameters
