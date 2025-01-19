@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import { USER_ENDPOINT } from "../../app/endpoints";
+import { CHARS_ENDPOINT, USER_ENDPOINT, TASKS_ENDPOINT } from "../../app/endpoints";
 
 interface AccountProps {
   setCharacterName: React.Dispatch<React.SetStateAction<string | undefined>>;
@@ -33,7 +33,7 @@ const Account: React.FC<AccountProps> = ({ setCharacterName }) => {
           setUser(data.user);
 
           // Fetch from dynamoDB
-          const charResponse = await fetch(USER_ENDPOINT + data.user.id);
+          const charResponse = await fetch(CHARS_ENDPOINT + data.user.id);
           const charData = await charResponse.json();
           setCharacters(charData.characterNames || []);
         } else {

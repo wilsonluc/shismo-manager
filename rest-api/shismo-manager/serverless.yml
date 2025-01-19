@@ -19,54 +19,79 @@ provider:
 
 params:
   default:
-    dynamodbName: shismo-manager
+    dynamodbName: shismo-websocket-connections
 
 package:
   individually: true
 
 functions:
-  getUser:
-    handler: handler.getUser
+  getCharacters:
+    handler: handler.getCharacters
     events:
       - httpApi:
-          path: /user/{discordID}
+          path: /characters/{discordID}
           method: get
 
-  getCharacter:
-    handler: handler.getCharacter
-    events:
-      - httpApi:
-          path: /user/{discordID}/{characterName}
-          method: get
-          
-  getTasks:
-    handler: handler.getTasks
-    events:
-      - httpApi:
-          path: /tasks/{discordID}/{characterName}
-          method: get
-          
-  setTasks:
-    handler: handler.setTasks
-    events:
-      - httpApi:
-          path: /tasks/{discordID}/{characterName}
-          method: put
+  # getUser:
+  #   handler: handler.getUser
+  #   events:
+  #     - httpApi:
+  #         path: /user/{discordID}
+  #         method: get
 
-resources:
-  Resources:
-    ShismoManagerTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        AttributeDefinitions:
-          - AttributeName: discordID
-            AttributeType: S
-          - AttributeName: characterName
-            AttributeType: S
-        KeySchema:
-          - AttributeName: discordID
-            KeyType: HASH
-          - AttributeName: characterName
-            KeyType: RANGE
-        BillingMode: PAY_PER_REQUEST
-        TableName: shismo-manager
+  # getCharacter:
+  #   handler: handler.getCharacter
+  #   events:
+  #     - httpApi:
+  #         path: /user/{discordID}/{characterName}
+  #         method: get
+
+  # getTasks:
+  #   handler: handler.getTasks
+  #   events:
+  #     - httpApi:
+  #         path: /tasks/{discordID}/{characterName}
+  #         method: get
+
+  # setTasks:
+  #   handler: handler.setTasks
+  #   events:
+  #     - httpApi:
+  #         path: /tasks/{discordID}/{characterName}
+  #         method: put
+
+# resources:
+#   Resources:
+#     ShismoManagerTable:
+#       Type: AWS::DynamoDB::Table
+#       Properties:
+#         AttributeDefinitions:
+#           - AttributeName: discordID
+#             AttributeType: S
+#           - AttributeName: characterName
+#             AttributeType: S
+#         KeySchema:
+#           - AttributeName: discordID
+#             KeyType: HASH
+#           - AttributeName: characterName
+#             KeyType: RANGE
+#         BillingMode: PAY_PER_REQUEST
+#         TableName: shismo-manager
+
+# resources:
+#   Resources:
+#     ShismoManagerTable:
+#       Type: AWS::DynamoDB::Table
+#       Properties:
+#         AttributeDefinitions:
+#           - AttributeName: discordID
+#             AttributeType: S
+#           - AttributeName: characterName
+#             AttributeType: S
+#         KeySchema:
+#           - AttributeName: discordID
+#             KeyType: HASH
+#           - AttributeName: characterName
+#             KeyType: RANGE
+#         BillingMode: PAY_PER_REQUEST
+#         TableName: shismo-websocket-connections
