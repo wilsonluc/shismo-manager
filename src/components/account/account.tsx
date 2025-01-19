@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import { CHARS_ENDPOINT, USER_ENDPOINT, TASKS_ENDPOINT } from "../../app/endpoints";
+import { CHARS_ENDPOINT } from "../../app/endpoints";
 
 interface AccountProps {
   setCharacterName: React.Dispatch<React.SetStateAction<string | undefined>>;
@@ -93,7 +93,7 @@ const Account: React.FC<AccountProps> = ({ setCharacterName }) => {
   if (loading) {
     return <div>Loading...</div>; // Show loading state while fetching user data
   }
-  
+
   return (
     <div className="absolute top-0 right-0">
       <button

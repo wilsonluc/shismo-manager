@@ -186,74 +186,74 @@ module.exports.getCharacters = async (event) => {
 //   }
 // };
 
-// module.exports.getTasks = async (event) => {
-//   try {
-//     // Extract discordID and characterName from the event path parameters
-//     const discordID = event.pathParameters.discordID;
-//     const characterName = event.pathParameters.characterName;
+module.exports.getTasks = async (event) => {
+  try {
+    // Extract discordID and characterName from the event path parameters
+    const discordID = event.pathParameters.discordID;
+    const characterName = event.pathParameters.characterName;
 
-//     // Query DynamoDB to fetch the tasks for the given discordID and characterName
-//     const params = {
-//       TableName: "shismo-manager",
-//       KeyConditionExpression:
-//         "#discordID = :discordID and #characterName = :characterName",
-//       ExpressionAttributeNames: {
-//         "#discordID": "discordID", // Partition key
-//         "#characterName": "characterName", // Sort key
-//       },
-//       ExpressionAttributeValues: {
-//         ":discordID": discordID, // discordID from the event
-//         ":characterName": characterName, // characterName from the event
-//       },
-//     };
+    // Query DynamoDB to fetch the tasks for the given discordID and characterName
+    const params = {
+      TableName: "shismo-websocket-connections",
+      KeyConditionExpression:
+        "#discordID = :discordID and #characterName = :characterName",
+      ExpressionAttributeNames: {
+        "#discordID": "discordID", // Partition key
+        "#characterName": "characterName", // Sort key
+      },
+      ExpressionAttributeValues: {
+        ":discordID": discordID, // discordID from the event
+        ":characterName": characterName, // characterName from the event
+      },
+    };
 
-//     // Perform the query to DynamoDB
-//     const data = await dynamoDb.query(params).promise();
+    // Perform the query to DynamoDB
+    const data = await dynamoDb.query(params).promise();
 
-//     // Check if we found any items
-//     if (data.Items && data.Items.length > 0) {
-//       // Assuming 'tasks' is a string attribute in the item
-//       const tasks = data.Items[0].tasks;
+    // Check if we found any items
+    if (data.Items) {
+      // Assuming 'tasks' is a string attribute in the item
+      const tasks = data.Items[0].tasks;
 
-//       return {
-//         statusCode: 200,
-//         body: JSON.stringify(
-//           {
-//             message: "Tasks fetched successfully",
-//             tasks: tasks,
-//           },
-//           null,
-//           2
-//         ),
-//       };
-//     } else {
-//       // No data found for the given discordID and characterName
-//       return {
-//         statusCode: 200,
-//         body: JSON.stringify(
-//           {
-//             message: "No tasks found for the given discordID and characterName",
-//             tasks: "",
-//           },
-//           null,
-//           2
-//         ),
-//       };
-//     }
-//   } catch (error) {
-//     return {
-//       statusCode: 500,
-//       body: JSON.stringify(
-//         {
-//           message: "Error fetching tasks",
-//           error: error.message,
-//         },
-//         null,
-//         2
-//       ),
-//     };
-//   }
-// };
+      return {
+        statusCode: 200,
+        body: JSON.stringify(
+          {
+            message: "Tasks fetched successfully",
+            tasks: tasks == null ? [] : tasks,
+          },
+          null,
+          2
+        ),
+      };
+    } else {
+      // No data found for the given discordID and characterName
+      return {
+        statusCode: 200,
+        body: JSON.stringify(
+          {
+            message: "No tasks found for the given discordID and characterName",
+            tasks: "",
+          },
+          null,
+          2
+        ),
+      };
+    }
+  } catch (error) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify(
+        {
+          message: "Error fetching tasks",
+          error: error.message,
+        },
+        null,
+        2
+      ),
+    };
+  }
+};
 
 // module.exports.setTasks = async (event) => {
 //   try {

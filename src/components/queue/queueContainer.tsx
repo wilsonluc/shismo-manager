@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { AgGridReact } from "ag-grid-react";
 import Image from "next/image";
 import Dropdown from "../dropdown/dropdown";
@@ -94,6 +94,11 @@ const QueueContainer: React.FC<QueueContainerProps> = ({ tasks, setTasks, charac
     return "";  // Return an empty string to disable the row drag text
   };
 
+  const [gridKey, setGridKey] = useState(0);
+  useEffect(() => {
+    setGridKey(prevKey => prevKey + 1); // Force re-render by changing key
+  }, [tasks]);
+
   return (
     <div>
       <Dropdown
@@ -113,6 +118,7 @@ const QueueContainer: React.FC<QueueContainerProps> = ({ tasks, setTasks, charac
 
             {/* Queue area */}
             <AgGridReact
+              key={gridKey}
               rowModelType="clientSide"
               columnDefs={colDefs}
               overlayNoRowsTemplate={(characterName === undefined) ? "Please select a character first" : "Task queue is empty"}

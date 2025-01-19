@@ -91,6 +91,9 @@ export function parseTasksJsonToString(tasks: Task[]): string {
 
 export function parseTasksStringToJson(tasksString: string): Task[] {
   try {
+    if (tasksString.length == 0) {
+      return [];
+    }
     return JSON.parse(tasksString);
   } catch (error) {
     console.error("Error parsing tasks string:", error);
