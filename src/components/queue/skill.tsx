@@ -10,30 +10,35 @@ export const generateSkill = (name: string): Skill => {
   };
 };
 
-export const agility = generateSkill("Agility");
-export const attack = generateSkill("Attack");
-export const construction = generateSkill("Construction");
-export const cooking = generateSkill("Cooking");
-export const crafting = generateSkill("Crafting");
-export const defence = generateSkill("Defence");
-export const firemaking = generateSkill("Firemaking");
-export const fishing = generateSkill("Fishing");
-export const fletching = generateSkill("Fletching");
-export const herblore = generateSkill("Herblore");
-export const hitpoints = generateSkill("Hitpoints");
-export const hunter = generateSkill("Hunter");
-export const magic = generateSkill("Magic");
-export const mining = generateSkill("Mining");
-export const prayer = generateSkill("Prayer");
-export const ranged = generateSkill("Ranged");
-export const runecrafting = generateSkill("Runecrafting");
-export const slayer = generateSkill("Slayer");
-export const smithing = generateSkill("Smithing");
-export const strength = generateSkill("Strength");
-export const thieving = generateSkill("Thieving");
-export const woodcutting = generateSkill("Woodcutting");
+export const getSkillIconPath = (skillName: string): string => {
+  console.log(skillName);
+  return `/assets/skills/${skillName.toLowerCase()}.png`;
+}
 
-export const skills: Skill[] = [
+export const agility = "Agility";
+export const attack = "Attack";
+export const construction = "Construction";
+export const cooking = "Cooking";
+export const crafting = "Crafting";
+export const defence = "Defence";
+export const firemaking = "Firemaking";
+export const fishing = "Fishing";
+export const fletching = "Fletching";
+export const herblore = "Herblore";
+export const hitpoints = "Hitpoints";
+export const hunter = "Hunter";
+export const magic = "Magic";
+export const mining = "Mining";
+export const prayer = "Prayer";
+export const ranged = "Ranged";
+export const runecrafting = "Runecrafting";
+export const slayer = "Slayer";
+export const smithing = "Smithing";
+export const strength = "Strength";
+export const thieving = "Thieving";
+export const woodcutting = "Woodcutting";
+
+export const skillNames: string[] = [
   agility,
   attack,
   construction,
@@ -58,7 +63,7 @@ export const skills: Skill[] = [
   woodcutting,
 ];
 
-export const getSkillBySkillName = (skillName: string): Skill => {
-  const skill = skills.find((skill) => skill.skillName === skillName);
+export const getSkillBySkillName = (skillName: string): string => {
+  const skill = skillNames.find((name) => name === skillName);
   return skill || woodcutting;
 };

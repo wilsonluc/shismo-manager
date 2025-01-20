@@ -1,7 +1,5 @@
-import { Skill } from "./skill";
-
 export interface Plugin {
-  skill: Skill;
+  skill: string;
   pluginName: string;
 }
 

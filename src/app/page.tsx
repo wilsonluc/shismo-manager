@@ -6,7 +6,6 @@ import Queue from "../components/queue/queue";
 import SkillContainer from "../components/skill/skillContainer";
 import Sync from "../components/sync/sync";
 import { useState } from "react";
-import { Skill } from "../components/queue/skill";
 
 export default function Home() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -29,7 +28,7 @@ export default function Home() {
 
 export interface Task {
   id: string;
-  skill: Skill;
+  skill: string;
   level?: number;
   duration?: number; // Minutes
   pluginName: string;

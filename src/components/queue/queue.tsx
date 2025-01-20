@@ -1,5 +1,4 @@
 import QueueEditorContainer from "./queueEditorContainer";
-import { getSkillBySkillName } from "./skill";
 import QueueContainer from "./queueContainer";
 import { Task } from "../../app/page";
 import { useEffect } from "react";
@@ -57,33 +56,6 @@ export const generateRandomString = (length: number): string => {
   }
   return result;
 };
-
-export const DEFAULT_CARDS: Task[] = [
-  {
-    skill: getSkillBySkillName("Woodcutting"),
-    level: 30,
-    pluginName: "Skiller",
-    id: generateRandomString(10),
-  },
-  {
-    skill: getSkillBySkillName("Crafting"),
-    level: 50,
-    pluginName: "Bank Skiller",
-    id: generateRandomString(10),
-  },
-  {
-    skill: getSkillBySkillName("Hunter"),
-    level: 70,
-    pluginName: "Hunters' Rumours",
-    id: generateRandomString(10),
-  },
-  {
-    skill: getSkillBySkillName("Slayer"),
-    duration: 50,
-    pluginName: "Slayer",
-    id: generateRandomString(10),
-  },
-];
 
 export function parseTasksJsonToString(tasks: Task[]): string {
   return JSON.stringify(tasks, null, 2);

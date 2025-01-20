@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import ChevronIcon from "../dropdown/chevronIcon";
 import Dropdown from "../dropdown/dropdown";
-import { getSkillBySkillName, skills } from "./skill";
+import { getSkillBySkillName, getSkillIconPath, skillNames } from "./skill";
 import { plugins } from "./plugin";
 import Image from "next/image";
 import { Task } from "../../app/page";
@@ -47,7 +47,7 @@ const QueueEditorContainer: React.FC<QueueEditorContainerProps> = ({
 
     const newCard: Task = {
       id: getLargestID(tasks),
-      skill: skill,
+      skillName: skill,
       pluginName: getPlugin,
     };
 
@@ -131,24 +131,24 @@ const QueueEditorContainer: React.FC<QueueEditorContainerProps> = ({
             {/* Select Skill */}
             {showSkillIcons && (
               <div className="skill-icons-container grid grid-cols-3 gap-2 mb-4">
-                {skills.map((skill) => (
+                {skillNames.map((skillName) => (
                   <div
-                    key={skill.skillName}
-                    onClick={() => setSkillName(skill.skillName)}
+                    key={skillName}
+                    onClick={() => setSkillName(skillName)}
                     className={`skill-icon cursor-pointer p-2 text-center border border-neutral-300 rounded ${
-                      getSkillName === skill.skillName
+                      getSkillName === skillName
                         ? "bg-blue-500 text-white"
                         : ""
                     }`}
                   >
                     <Image
-                      src={skill.iconPath}
-                      alt={skill.skillName}
+                      src={getSkillIconPath(skillName)}
+                      alt={skillName}
                       width={32}
                       height={32}
                       className="mx-auto"
                     />
-                    <p>{skill.skillName}</p>{" "}
+                    <p>{skillName}</p>{" "}
                   </div>
                 ))}
               </div>

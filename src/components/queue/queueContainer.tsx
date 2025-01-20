@@ -21,6 +21,7 @@ import {
   RowDragModule,
 } from "ag-grid-community";
 import { Task } from "../../app/page";
+import { getSkillIconPath } from "./skill";
 
 ModuleRegistry.registerModules([
   CellStyleModule,
@@ -40,9 +41,9 @@ const QueueContainer: React.FC<QueueContainerProps> = ({ tasks, setTasks, charac
   const [colDefs] = useState<ColDef<Task>[]>([
     {
       field: "skill",
-      cellRenderer: (params: { data: { skill: { iconPath: string } } }) => {
+      cellRenderer: (params: { data: { skillName: string } }) => {
         const iconPath =
-          params.data && params.data.skill ? params.data.skill.iconPath : "";
+          params.data ? getSkillIconPath(params.data.skillName) : "";
         return iconPath ? (
           <Image
             src={iconPath}
