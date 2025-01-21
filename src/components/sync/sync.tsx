@@ -60,10 +60,7 @@ const Sync: React.FC<SyncProps> = ({ tasks, characterName }) => {
             action: "sync", // route
             discordID: data.user.id,
             characterName: characterName,
-            isOnline: false,
-            skills: null,
-            tasks: parseTasksJsonToString(tasks),
-            currentTaskID: null,
+            tasks: parseTasksJsonToString(tasks)
           };
 
           socketRef.current.send(JSON.stringify(params));

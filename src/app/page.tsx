@@ -14,11 +14,11 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background p-8">
       <div className="max-w-[1920px] mx-auto relative">
-        
+        <Header />
+
         <Account setCharacterName={setCharacterName} />
         <Sync tasks={tasks} characterName={characterName}/>
 
-        <Header />
         <Queue tasks={tasks} setTasks={setTasks} characterName={characterName}/>
         {characterName !== undefined && <SkillContainer />}        
       </div>

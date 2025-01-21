@@ -11,7 +11,7 @@ export const generateSkill = (name: string): Skill => {
 };
 
 export const getSkillIconPath = (skillName: string): string => {
-  console.log(skillName);
+  // console.log(skillName);
   return `/assets/skills/${skillName.toLowerCase()}.png`;
 }
 

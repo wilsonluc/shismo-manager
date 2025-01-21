@@ -7,7 +7,7 @@ import Image from "next/image";
 import { Task } from "../../app/page";
 
 function getLargestID(tasks: Task[]): string {
-  console.log(tasks);
+  // console.log(tasks);
   if (tasks.length === 0) {
     return "0";
   }
