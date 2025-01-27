@@ -163,6 +163,7 @@ const QueueContainer: React.FC<QueueContainerProps> = ({ tasks, setTasks, charac
                   node.data.id = index;
                   allRowData.push(node.data);
                 });
+                setTasks(allRowData);
                 console.log("Row data: ", allRowData);
               }}
 
