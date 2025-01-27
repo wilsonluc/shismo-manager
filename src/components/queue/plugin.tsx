@@ -4,8 +4,6 @@ export interface Plugin {
 }
 
 export const plugins: string[] = [
-  "Hunters' Rumours",
-  "Motherlode Mine",
-  "Slayer",
-  "Tempoross",
+  "Shismo Herbiboar",
+  "Shismo Thiever"
 ];
