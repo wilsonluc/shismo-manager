@@ -53,6 +53,13 @@ functions:
           path: /tasks/{discordID}/{characterName}
           method: get
 
+  getSkills:
+    handler: handler.getSkills
+    events:
+      - httpApi:
+          path: /skills/{discordID}/{characterName}
+          method: get
+
   # setTasks:
   #   handler: handler.setTasks
   #   events:

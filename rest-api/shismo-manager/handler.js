@@ -255,6 +255,75 @@ module.exports.getTasks = async (event) => {
   }
 };
 
+module.exports.getSkills = async (event) => {
+  try {
+    // Extract discordID and characterName from the event path parameters
+    const discordID = event.pathParameters.discordID;
+    const characterName = event.pathParameters.characterName;
+
+    // Query DynamoDB to fetch the skills for the given discordID and characterName
+    const params = {
+      TableName: "shismo-websocket-connections",
+      KeyConditionExpression:
+        "#discordID = :discordID and #characterName = :characterName",
+      ExpressionAttributeNames: {
+        "#discordID": "discordID", // Partition key
+        "#characterName": "characterName", // Sort key
+      },
+      ExpressionAttributeValues: {
+        ":discordID": discordID, // discordID from the event
+        ":characterName": characterName, // characterName from the event
+      },
+    };
+
+    // Perform the query to DynamoDB
+    const data = await dynamoDb.query(params).promise();
+
+    // Check if we found any items
+    if (data.Items) {
+      // Assuming 'skills' is a string attribute in the item
+      const skills = data.Items[0].skills;
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify(
+          {
+            message: "Skills fetched successfully",
+            skills: skills == null ? [] : skills,
+          },
+          null,
+          2
+        ),
+      };
+    } else {
+      // No data found for the given discordID and characterName
+      return {
+        statusCode: 200,
+        body: JSON.stringify(
+          {
+            message: "No skills found for the given discordID and characterName",
+            skills: "",
+          },
+          null,
+          2
+        ),
+      };
+    }
+  } catch (error) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify(
+        {
+          message: "Error fetching skills",
+          error: error.message,
+        },
+        null,
+        2
+      ),
+    };
+  }
+};
+
 // module.exports.setTasks = async (event) => {
 //   try {
 //     // Extract discordID and characterName from the event path parameters
