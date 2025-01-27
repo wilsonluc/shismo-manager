@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef } from "react";
-import { TASKS_ENDPOINT } from "../../app/endpoints";
 import { Task } from "../../app/page";
 import { parseTasksJsonToString } from "../queue/queue";
 

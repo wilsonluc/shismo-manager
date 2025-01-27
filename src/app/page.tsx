@@ -20,7 +20,7 @@ export default function Home() {
         <Sync tasks={tasks} characterName={characterName}/>
 
         <Queue tasks={tasks} setTasks={setTasks} characterName={characterName}/>
-        {characterName !== undefined && <SkillContainer />}        
+        {characterName !== undefined && <SkillContainer characterName={characterName}/>}        
       </div>
     </div>
   );
