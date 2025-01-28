@@ -64,6 +64,6 @@ export const skillNames: string[] = [
 ];
 
 export const getSkillBySkillName = (skillName: string): string => {
-  const skill = skillNames.find((name) => name === skillName);
+  const skill = skillNames.find((name) => name.toLowerCase === skillName.toLowerCase);
   return skill || woodcutting;
 };

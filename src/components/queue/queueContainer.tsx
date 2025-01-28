@@ -42,9 +42,9 @@ const QueueContainer: React.FC<QueueContainerProps> = ({ tasks, setTasks, charac
   const [colDefs] = useState<ColDef<Task>[]>([
     {
       field: "skill",
-      cellRenderer: (params: { data: { skillName: string } }) => {
+      cellRenderer: (params: { data: { skill: string } }) => {
         const iconPath =
-          params.data ? getSkillIconPath(params.data.skillName) : "";
+          params.data ? getSkillIconPath(params.data.skill) : "";
         return iconPath ? (
           <Image
             src={iconPath}
