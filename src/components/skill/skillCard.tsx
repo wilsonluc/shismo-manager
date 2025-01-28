@@ -9,7 +9,7 @@ interface CardProps {
 
 const SkillCard = ({ skill, level, image }: CardProps) => {
   return (
-    <div className="p-4 rounded-lg border bg-card relative transition-all duration-200 cursor-pointer bg-muted border-border">
+    <div style={{ userSelect: 'none' }} className="p-4 rounded-lg border bg-card relative transition-all duration-200 bg-muted border-border">
       <div className="flex items-start justify-between">
         <div className="space-y-1.5">
           <div className="flex items-center gap-2">
