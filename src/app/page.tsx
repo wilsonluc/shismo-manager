@@ -105,6 +105,69 @@ export default function Home() {
     }
   }, [characterName, user]);
 
+  useEffect(() => {
+    if (user && user.id && characterName) {
+      const wsUrl = `wss://cn2xa6jdhj.execute-api.eu-west-2.amazonaws.com/production/?discordID=${user.id}&characterName=${characterName}`;
+      const ws = new WebSocket(wsUrl);
+
+      ws.onopen = () => {
+        console.log("Websocket connection opened");
+      };
+
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        console.log("WebSocket message received:", data);
+
+        // Parse skills
+        if (data.skills) {
+          console.log("Skills received: " + data.skills);
+          setSkillLevels(parseSkillLevelsFromJson(data.skills));
+        }
+
+        // Parse tasks
+        if (data.tasks) {
+          console.log("Tasks received: " + data.tasks);
+
+          const updatedTasks: Task[] = [];
+
+          const jsonTasks = JSON.parse(data.tasks);
+          for (const key in jsonTasks) {
+            const id = jsonTasks[key].id;
+            const skill = jsonTasks[key].skill;
+
+            let level = jsonTasks[key].level;
+            level = level ? parseInt(level) : null;
+            let duration = jsonTasks[key].duration;
+            duration = duration ? parseInt(duration) : null;
+
+            const pluginName = jsonTasks[key].pluginName;
+            const updatedTask = new Task(
+              id,
+              skill,
+              level,
+              duration,
+              pluginName
+            );
+            updatedTasks.push(updatedTask);
+          }
+          setTasks(updatedTasks);
+        }
+      };
+
+      ws.onclose = () => {
+        console.log("Websocket connection closed");
+      };
+
+      setSocket(ws);
+
+      return () => {
+        if (ws) {
+          ws.close();
+        }
+      };
+    }
+  }, [characterName, user]);
+
   return (
     <div className="min-h-screen bg-background p-8">
       <div className="max-w-[1920px] mx-auto relative">
@@ -117,7 +180,12 @@ export default function Home() {
           loadingCharacterNames={loadingCharacterNames}
           characterNames={characterNames}
         />
-        <Sync tasks={tasks} characterName={characterName} />
+        <Sync
+          tasks={tasks}
+          user={user}
+          characterName={characterName}
+          socket={socket}
+        />
 
         <Queue
           tasks={tasks}
@@ -133,12 +201,26 @@ export default function Home() {
   );
 }
 
-export interface Task {
+export class Task {
   id: string;
   skill: string;
   level?: number;
   duration?: number; // Minutes
   pluginName: string;
+
+  constructor(
+    id: string,
+    skill: string,
+    level: number,
+    duration: number,
+    pluginName: string
+  ) {
+    this.id = id;
+    this.skill = skill;
+    this.level = level;
+    this.duration = duration;
+    this.pluginName = pluginName;
+  }
 }
 
 export class SkillLevel {
@@ -162,17 +244,12 @@ export function parseSkillLevelsFromJson(jsonString: string): SkillLevel[] {
     let skillStr = skillSplit[0];
     const levelStr = skillSplit[1];
 
-    if (skillStr === "RUNECRAFT") {
-      skillStr = "Runecrafting";
-    } else {
-      // Capitalise first char, lowercase all other chars
-      skillStr =
-        skillStr === "RUNECRAFT"
-          ? "Runecrafting"
-          : `${skillStr.charAt(0).toUpperCase()}${skillStr
-              .slice(1)
-              .toLowerCase()}`;
-    }
+    skillStr =
+      skillStr === "RUNECRAFT"
+        ? "Runecrafting"
+        : `${skillStr.charAt(0).toUpperCase()}${skillStr
+            .slice(1)
+            .toLowerCase()}`;
 
     const level = parseInt(levelStr, 10);
     const skill = skills.find((s) => s.skill === skillStr);

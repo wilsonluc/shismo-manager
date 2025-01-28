@@ -1,86 +1,29 @@
 "use client";
 
-import { useRef } from "react";
 import { Task } from "../../app/page";
 import { parseTasksJsonToString } from "../queue/queue";
+import { Profile } from "passport-discord";
 
 interface SyncProps {
   tasks: Task[];
+  user: Profile | undefined;
   characterName: string | undefined;
+  socket: WebSocket | null;
 }
 
-const Sync: React.FC<SyncProps> = ({ tasks, characterName }) => {
-  // Websocket reference
-  const socketRef = useRef<WebSocket | null>(null);
-
-  // Function to send the PUT request to update tasks
-  // const setTasks = async () => {
-  //   try {
-  //     const response = await fetch("/api/user");
-  //     const data = await response.json();
-
-  //     if (data.user && characterName) {
-  //       const tasksResponse = await fetch(
-  //         TASKS_ENDPOINT + data.user.id + "/" + characterName,
-  //         {
-  //           method: "PUT",
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //           },
-  //           body: JSON.stringify({ tasks: parseTasksJsonToString(tasks) }),
-  //         }
-  //       );
-
-  //       const tasksJson = await tasksResponse.json();
-  //       if (tasksResponse.ok) {
-  //         console.log("Tasks updated successfully:", tasksJson);
-  //       } else {
-  //         console.error("Failed to update tasks:", tasksJson);
-  //       }
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching user/characterName data:", error);
-  //   }
-  // };
-
+const Sync: React.FC<SyncProps> = ({ tasks, user, characterName, socket }) => {
   const syncWebSocket = async () => {
-    try {
-      const response = await fetch("/api/user");
-      const data = await response.json();
+    if (socket && user) {
+      const params = {
+        action: "sync", // route
+        discordID: user.id,
+        characterName: characterName,
+        tasks: parseTasksJsonToString(tasks)
+      };
 
-      if (data.user && characterName) {
-        const wsUrl = `wss://cn2xa6jdhj.execute-api.eu-west-2.amazonaws.com/production/?discordID=${data.user.id}&characterName=${characterName}`;
-        socketRef.current = new WebSocket(wsUrl);
-
-        socketRef.current.onopen = () => {
-          console.log("WebSocket connected");
-
-          const params = {
-            action: "sync", // route
-            discordID: data.user.id,
-            characterName: characterName,
-            tasks: parseTasksJsonToString(tasks)
-          };
-
-          socketRef.current.send(JSON.stringify(params));
-        };
-
-        socketRef.current.onmessage = (event) => {
-          console.log("Received message: " + event.data);
-        };
-
-        socketRef.current.onerror = (error) => {
-          console.error("WebSocket error:", error);
-        };
-        
-        socketRef.current.onclose = () => {
-          console.log("WebSocket connection closed");
-        };
-      }
-    } catch (error) {
-      console.error("Error setting up websocket", error);
+      socket.send(JSON.stringify(params));
     }
-  };
+  }
 
   return (
     <div className="absolute top-0 right-12">
