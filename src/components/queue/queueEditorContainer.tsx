@@ -131,24 +131,24 @@ const QueueEditorContainer: React.FC<QueueEditorContainerProps> = ({
             {/* Select Skill */}
             {showSkillIcons && (
               <div className="skill-icons-container grid grid-cols-3 gap-2 mb-4">
-                {skillNames.map((skillName) => (
+                {skillNames.map((skill) => (
                   <div
-                    key={skillName}
-                    onClick={() => setSkillName(skillName)}
+                    key={skill}
+                    onClick={() => setSkillName(skill)}
                     className={`skill-icon cursor-pointer p-2 text-center border border-neutral-300 rounded ${
-                      getSkillName === skillName
+                      getSkillName === skill
                         ? "bg-blue-500 text-white"
                         : ""
                     }`}
                   >
                     <Image
-                      src={getSkillIconPath(skillName)}
-                      alt={skillName}
+                      src={getSkillIconPath(skill)}
+                      alt={skill}
                       width={32}
                       height={32}
                       className="mx-auto"
                     />
-                    <p>{skillName}</p>{" "}
+                    <p>{skill}</p>{" "}
                   </div>
                 ))}
               </div>
