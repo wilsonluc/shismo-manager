@@ -10,7 +10,6 @@ import {
   ModuleRegistry,
   ColDef,
   GridReadyEvent,
-  RowDragEvent,
   RowDropZoneParams,
 } from "ag-grid-community";
 import {

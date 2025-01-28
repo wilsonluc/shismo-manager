@@ -40,14 +40,14 @@ const QueueEditorContainer: React.FC<QueueEditorContainerProps> = ({
     if (!getPlugin.trim()) return;
 
     // Validate skill
-    const skill = getSkillBySkillName(getSkillName);
+    const skill = getSkillBySkillName(getSkillName.toLowerCase());
     if (!skill) {
       return;
     }
 
     const newCard: Task = {
       id: getLargestID(tasks),
-      skill: skill,
+      skillName: skill,
       pluginName: getPlugin,
     };
 
