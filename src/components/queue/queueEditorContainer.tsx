@@ -47,7 +47,7 @@ const QueueEditorContainer: React.FC<QueueEditorContainerProps> = ({
 
     const newCard: Task = {
       id: getLargestID(tasks),
-      skillName: skill,
+      skill: skill,
       pluginName: getPlugin,
     };
 

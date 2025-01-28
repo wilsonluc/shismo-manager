@@ -1,54 +1,25 @@
 "use client";
 
+import { Profile } from "passport-discord";
 import React, { useEffect, useState, useRef } from "react";
-import { CHARS_ENDPOINT } from "../../app/endpoints";
 
 interface AccountProps {
   setCharacterName: React.Dispatch<React.SetStateAction<string | undefined>>;
+  characterNames: string[];
+  loadingCharacterNames: boolean;
+  user: Profile | undefined;
+  setUser: React.Dispatch<Profile | undefined>;
 }
 
-const Account: React.FC<AccountProps> = ({ setCharacterName }) => {
-  const [user, setUser] = useState<any>(null); // Store the user object
-  const [loading, setLoading] = useState(true); // To manage loading state
+const Account: React.FC<AccountProps> = ({ setCharacterName, loadingCharacterNames, characterNames, user, setUser }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement | null>(null); // Reference to the dropdown menu
   const buttonRef = useRef<HTMLButtonElement | null>(null); // Reference to the account management button
 
-  const [characters, setCharacters] = useState<string[]>([]); // Store character names from dynamoDB
-
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
-
-  useEffect(() => {
-    // Fetch the user data from the /api/user route
-    const fetchUser = async () => {
-      try {
-        const response = await fetch("/api/user");
-        const data = await response.json();
-
-        // If the user is authenticated, store the user data in state
-        if (data.user) {
-          setUser(data.user);
-
-          // Fetch from dynamoDB
-          const charResponse = await fetch(CHARS_ENDPOINT + data.user.id);
-          const charData = await charResponse.json();
-          setCharacters(charData.characterNames || []);
-        } else {
-          setUser(null); // If the user is not authenticated, set user to null
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, []);
 
   const logout = async () => {
     try {
@@ -60,7 +31,7 @@ const Account: React.FC<AccountProps> = ({ setCharacterName }) => {
       });
 
       if (response.ok) {
-        setUser(null); // Clear the user state
+        setUser(undefined); // Clear the user state
         setCharacterName(undefined); // Clear the character name
         window.location.href = "/"; // Redirect to homepage or login page
       } else {
@@ -90,7 +61,7 @@ const Account: React.FC<AccountProps> = ({ setCharacterName }) => {
     };
   }, []);
 
-  if (loading) {
+  if (loadingCharacterNames) {
     return <div>Loading...</div>; // Show loading state while fetching user data
   }
 
@@ -150,16 +121,16 @@ const Account: React.FC<AccountProps> = ({ setCharacterName }) => {
                     Logout
                   </button>
                 </li>
-                {characters.map((character, index) => (
+                {characterNames.map((characterName, index) => (
                   <li key={index}>
                     <button
                       className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full"
                       onClick={() => {
-                        setCharacterName(character);
+                        setCharacterName(characterName);
                         setIsOpen(false);
                       }}
                     >
-                      {character}
+                      {characterName}
                     </button>
                   </li>
                 ))}

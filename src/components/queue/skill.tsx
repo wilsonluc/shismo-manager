@@ -1,18 +1,18 @@
 export interface Skill {
-  skillName: string;
+  skill: string;
   iconPath: string;
 }
 
 export const generateSkill = (name: string): Skill => {
   return {
-    skillName: name,
+    skill: name,
     iconPath: `/assets/skills/${name.toLowerCase()}.png`,
   };
 };
 
-export const getSkillIconPath = (skillName: string): string => {
+export const getSkillIconPath = (skill: string): string => {
   // console.log(skillName);
-  return `/assets/skills/${skillName.toLowerCase()}.png`;
+  return `/assets/skills/${skill.toLowerCase()}.png`;
 }
 
 export const agility = "Agility";
