@@ -4,7 +4,7 @@ import Image from "next/image";
 import Dropdown from "../dropdown/dropdown";
 import ChevronIcon from "../dropdown/chevronIcon";
 
-import { colorSchemeDarkBlue, RowDragEndEvent, themeQuartz } from "ag-grid-community";
+import { colorSchemeDarkBlue, RowDragEndEvent, RowDragEvent, themeQuartz } from "ag-grid-community";
 
 import {
   ModuleRegistry,
@@ -140,16 +140,16 @@ const QueueContainer: React.FC<QueueContainerProps> = ({ tasks, setTasks, charac
                     }
                     throw new Error("Trash area container is not available");
                   },
-                  // onDragStop: (dragEvent: RowDragEvent) => {
-                  //   console.log("Dragged Row Data: ", dragEvent.node.data);
+                  onDragStop: (dragEvent: RowDragEvent) => {
+                    console.log("Dragged Row Data: ", dragEvent.node.data);
 
-                  //   // If a drop happened on the trash area, remove the row from the grid
-                  //   setTasks((prevTasks) => {
-                  //     const updatedTasks = prevTasks.filter((task) => task !== dragEvent.node.data);
-                  //     tasks = updatedTasks;
-                  //     return updatedTasks;
-                  //   });
-                  // },
+                    // If a drop happened on the trash area, remove the row from the grid
+                    setTasks((prevTasks) => {
+                      const updatedTasks = prevTasks.filter((task) => task !== dragEvent.node.data);
+                      tasks = updatedTasks;
+                      return updatedTasks;
+                    });
+                  },
                 };
 
                 gridApi.addRowDropZone(dropZone);
