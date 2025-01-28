@@ -324,6 +324,68 @@ module.exports.getSkills = async (event) => {
   }
 };
 
+module.exports.getAll = async (event) => {
+  try {
+    const discordID = event.pathParameters.discordID;
+    const characterName = event.pathParameters.characterName;
+
+    const params = {
+      TableName: "shismo-websocket-connections",
+      KeyConditionExpression:
+        "#discordID = :discordID and #characterName = :characterName",
+      ExpressionAttributeNames: {
+        "#discordID": "discordID", // Partition key
+        "#characterName": "characterName", // Sort key
+      },
+      ExpressionAttributeValues: {
+        ":discordID": discordID, // discordID from the event
+        ":characterName": characterName, // characterName from the event
+      },
+    };
+
+    const data = await dynamoDb.query(params).promise();
+
+    if (data.Items && data.Items.length > 0) {
+      return {
+        statusCode: 200,
+        body: JSON.stringify(
+          {
+            message: "Data fetched successfully",
+            item: data.Items[0], // Return all attributes
+          },
+          null,
+          2
+        ),
+      };
+    } else {
+      // No data found
+      return {
+        statusCode: 200,
+        body: JSON.stringify(
+          {
+            message: "No data found for the given discordID and characterName",
+            item: {},
+          },
+          null,
+          2
+        ),
+      };
+    }
+  } catch (error) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify(
+        {
+          message: "Error fetching data",
+          error: error.message,
+        },
+        null,
+        2
+      ),
+    };
+  }
+};
+
 // module.exports.setTasks = async (event) => {
 //   try {
 //     // Extract discordID and characterName from the event path parameters

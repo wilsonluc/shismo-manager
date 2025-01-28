@@ -6,13 +6,14 @@ interface QueueProps {
   tasks: Task[];
   setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
   characterName: string | undefined;
+  plugins: string[]
 }
 
-const Queue: React.FC<QueueProps> = ({ tasks, setTasks, characterName }) => {
+const Queue: React.FC<QueueProps> = ({ tasks, setTasks, characterName, plugins }) => {
   return (
     <div>
       <QueueContainer tasks={tasks} setTasks={setTasks} characterName={characterName} />
-      <QueueEditorContainer tasks={tasks} setTasks={setTasks} characterName={characterName} />
+      <QueueEditorContainer tasks={tasks} setTasks={setTasks} characterName={characterName} plugins={plugins} />
     </div>
   );
 };

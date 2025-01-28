@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import ChevronIcon from "../dropdown/chevronIcon";
 import Dropdown from "../dropdown/dropdown";
 import { getSkillBySkillName, getSkillIconPath, skillNames } from "./skill";
-import { plugins } from "./plugin";
 import Image from "next/image";
 import { Task } from "../../app/page";
 
@@ -11,19 +10,23 @@ function getLargestID(tasks: Task[]): string {
   if (tasks.length === 0) {
     return "0";
   }
-  return (Math.max(...tasks.map(task => parseInt(task.id, 10))) + 1).toString();
+  return (
+    Math.max(...tasks.map((task) => parseInt(task.id, 10))) + 1
+  ).toString();
 }
 
 interface QueueEditorContainerProps {
   tasks: Task[];
   setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
   characterName: string | undefined;
+  plugins: string[];
 }
 
 const QueueEditorContainer: React.FC<QueueEditorContainerProps> = ({
   tasks,
   setTasks,
   characterName,
+  plugins,
 }) => {
   const [getSkillName, setSkillName] = useState("");
   const [getLevel, setLevel] = useState("");
@@ -136,9 +139,7 @@ const QueueEditorContainer: React.FC<QueueEditorContainerProps> = ({
                     key={skill}
                     onClick={() => setSkillName(skill)}
                     className={`skill-icon cursor-pointer p-2 text-center border border-neutral-300 rounded ${
-                      getSkillName === skill
-                        ? "bg-blue-500 text-white"
-                        : ""
+                      getSkillName === skill ? "bg-blue-500 text-white" : ""
                     }`}
                   >
                     <Image

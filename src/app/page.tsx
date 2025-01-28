@@ -6,15 +6,17 @@ import Queue from "../components/queue/queue";
 import SkillContainer from "../components/skill/skillContainer";
 import Sync from "../components/sync/sync";
 import { useEffect, useState } from "react";
-import { CHARS_ENDPOINT, SKILLS_ENDPOINT, TASKS_ENDPOINT } from "./endpoints";
+// import { CHARS_ENDPOINT, SKILLS_ENDPOINT, TASKS_ENDPOINT } from "./endpoints";
+import { CHARS_ENDPOINT, REST_ENDPOINT } from "./endpoints";
 import { Profile } from "passport-discord";
 
 export default function Home() {
-  const [user, setUser] = useState<Profile>();
+  const [user, setUser] = useState<Profile | undefined>();
   const [characterNames, setCharacterNames] = useState<string[]>([]);
   const [loadingCharacterNames, setLoadingCharacterNames] = useState(false);
 
   const [characterName, setCharacterName] = useState<string | undefined>();
+  const [plugins, setPlugins] = useState<string[]>([]);
   const [skillLevels, setSkillLevels] = useState<SkillLevel[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [socket, setSocket] = useState<WebSocket | null>(null);
@@ -66,42 +68,41 @@ export default function Home() {
     }
   }, [characterNames, user]);
 
-  // Set skills
+  // Set plugins, skills & tasks
   useEffect(() => {
-    const fetchSkills = async () => {
+    const fetchAll = async () => {
       if (!user) return;
       const skillLevelsResponse = await fetch(
-        SKILLS_ENDPOINT + user.id + "/" + characterName
+        REST_ENDPOINT + user.id + "/" + characterName
       );
-      const skillLevelsData = await skillLevelsResponse.json();
+      const jsonData = await skillLevelsResponse.json();
 
-      if (skillLevelsData.skills && skillLevelsData.skills.length > 0) {
-        setSkillLevels(parseSkillLevelsFromJson(skillLevelsData.skills));
+      const item = jsonData.item;
+      if (!item) {
+        console.log("No item found")
+        return
       }
-    };
 
-    if (user && user.id && characterName) {
-      fetchSkills();
-    }
-  }, [characterName, user]);
+      // Set plugins
+      if (item.availablePlugins && item.availablePlugins.length > 0) {
+        setPlugins(parsePluginsFromJson(item.availablePlugins));
+      }
 
-  // Set tasks
-  useEffect(() => {
-    const fetchTasks = async () => {
-      if (!user) return;
-      const tasksResponse = await fetch(
-        TASKS_ENDPOINT + user.id + "/" + characterName
-      );
-      const tasksData = await tasksResponse.json();
-      if (tasksData.tasks === "") {
+      // Set skills
+      if (item.skills && item.skills.length > 0) {
+        setSkillLevels(parseSkillLevelsFromJson(item.skills));
+      }
+
+      // Set tasks
+      if (item.tasks === "") {
         setTasks([]);
       } else {
-        setTasks(parseTasksStringToJson(tasksData.tasks));
+        setTasks(parseTasksFromJson(item.tasks));
       }
     };
 
     if (user && user.id && characterName) {
-      fetchTasks();
+      fetchAll();
     }
   }, [characterName, user]);
 
@@ -191,6 +192,7 @@ export default function Home() {
           tasks={tasks}
           setTasks={setTasks}
           characterName={characterName}
+          plugins={plugins}
         />
         <SkillContainer
           characterName={characterName}
@@ -231,6 +233,20 @@ export class SkillLevel {
     this.skill = skill;
     this.level = level;
   }
+}
+
+export function parsePluginsFromJson(jsonString: string): string[] {
+  const plugins: string[] = [];
+
+  const excludeTerms: string[] = ["Auto Eater", "Break", "Profiles", "Loader", "Scheduler", "Utils", "Webwalker"];
+
+  const pluginsArr: string[] = jsonString.split(", ");
+  for (const plugin of pluginsArr) {
+    if (plugin.includes("Shismo") && !excludeTerms.some(term => plugin.includes(term))) {
+      plugins.push(plugin);
+    }
+  }
+  return plugins;
 }
 
 export function parseSkillLevelsFromJson(jsonString: string): SkillLevel[] {
@@ -297,7 +313,7 @@ const defaultSkillLevels: SkillLevel[] = [
   { skill: "Construction", level: 1 },
 ];
 
-export function parseTasksStringToJson(tasksString: string): Task[] {
+export function parseTasksFromJson(tasksString: string): Task[] {
   try {
     if (tasksString.length == 0) {
       return [];

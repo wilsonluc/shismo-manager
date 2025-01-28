@@ -46,18 +46,25 @@ functions:
   #         path: /user/{discordID}/{characterName}
   #         method: get
 
-  getTasks:
-    handler: handler.getTasks
-    events:
-      - httpApi:
-          path: /tasks/{discordID}/{characterName}
-          method: get
+  # getTasks:
+  #   handler: handler.getTasks
+  #   events:
+  #     - httpApi:
+  #         path: /tasks/{discordID}/{characterName}
+  #         method: get
 
-  getSkills:
-    handler: handler.getSkills
+  # getSkills:
+  #   handler: handler.getSkills
+  #   events:
+  #     - httpApi:
+  #         path: /skills/{discordID}/{characterName}
+  #         method: get
+
+  getAll:
+    handler: handler.getAll
     events:
       - httpApi:
-          path: /skills/{discordID}/{characterName}
+          path: /api/{discordID}/{characterName}
           method: get
 
   # setTasks:
