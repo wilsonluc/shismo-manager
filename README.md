@@ -1,4 +1,7 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+In [Your drive]:\Users\[Your user]\.aws\credentials, create credential with name [default], e.g.,:
+[default]
+aws_access_key_id=[insert_access_key_id_here]
+aws_secret_access_key=[insert_secret_access_key_here]
 
 ## Getting Started
 
