@@ -11,7 +11,13 @@ interface AccountProps {
   setUser: React.Dispatch<Profile | undefined>;
 }
 
-const Account: React.FC<AccountProps> = ({ setCharacterName, loadingCharacterNames, characterNames, user, setUser }) => {
+const Account: React.FC<AccountProps> = ({
+  setCharacterName,
+  loadingCharacterNames,
+  characterNames,
+  user,
+  setUser,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement | null>(null); // Reference to the dropdown menu
@@ -99,11 +105,11 @@ const Account: React.FC<AccountProps> = ({ setCharacterName, loadingCharacterNam
           ref={dropdownRef} // Attach the ref to the dropdown menu
           className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md z-10"
         >
-          <ul className="space-y-2 py-2">
+          <ul className="rounded-md">
             {!user ? (
               <li>
                 <button
-                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full"
+                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md w-full"
                   onClick={() => {
                     window.location.href = "/auth/discord/callback"; // Redirect to Discord login if no user
                   }}
@@ -115,7 +121,7 @@ const Account: React.FC<AccountProps> = ({ setCharacterName, loadingCharacterNam
               <>
                 <li>
                   <button
-                    className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full"
+                    className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md w-full"
                     onClick={logout}
                   >
                     Logout
@@ -124,7 +130,7 @@ const Account: React.FC<AccountProps> = ({ setCharacterName, loadingCharacterNam
                 {characterNames.map((characterName, index) => (
                   <li key={index}>
                     <button
-                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full"
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md w-full"
                       onClick={() => {
                         setCharacterName(characterName);
                         setIsOpen(false);
