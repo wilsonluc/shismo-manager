@@ -105,7 +105,7 @@ const Account: React.FC<AccountProps> = ({
           ref={dropdownRef} // Attach the ref to the dropdown menu
           className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md z-10"
         >
-          <ul className="rounded-md">
+          <ul className="rounded-md py-2">
             {!user ? (
               <li>
                 <button

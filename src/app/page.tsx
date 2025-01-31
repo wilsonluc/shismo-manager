@@ -21,7 +21,7 @@ export default function Home() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [socket, setSocket] = useState<WebSocket | null>(null);
 
-  // Set user
+  // Set user (initial load)
   useEffect(() => {
     const fetchUser = async () => {
       // Call backend to get user data
@@ -37,7 +37,7 @@ export default function Home() {
     fetchUser();
   }, []);
 
-  // Set character names
+  // Set character names (user set)
   useEffect(() => {
     const fetchCharacterNames = async () => {
       if (user && user.id) {
@@ -53,9 +53,9 @@ export default function Home() {
     if (user) {
       fetchCharacterNames();
     }
-  }, [loadingCharacterNames, user]);
+  }, [user]);
 
-  // Set character name
+  // Set character name (characterNames set)
   useEffect(() => {
     const fetchCharacterName = async () => {
       if (characterNames[0]) {
@@ -66,46 +66,9 @@ export default function Home() {
     if (user) {
       fetchCharacterName();
     }
-  }, [characterNames, user]);
+  }, [user, characterNames]);
 
-  // Set plugins, skills & tasks
-  useEffect(() => {
-    const fetchAll = async () => {
-      if (!user) return;
-      const skillLevelsResponse = await fetch(
-        REST_ENDPOINT + user.id + "/" + characterName
-      );
-      const jsonData = await skillLevelsResponse.json();
-
-      const item = jsonData.item;
-      if (!item) {
-        console.log("No item found")
-        return
-      }
-
-      // Set plugins
-      if (item.availablePlugins && item.availablePlugins.length > 0) {
-        setPlugins(parsePluginsFromJson(item.availablePlugins));
-      }
-
-      // Set skills
-      if (item.skills && item.skills.length > 0) {
-        setSkillLevels(parseSkillLevelsFromJson(item.skills));
-      }
-
-      // Set tasks
-      if (item.tasks === "") {
-        setTasks([]);
-      } else {
-        setTasks(parseTasksFromJson(item.tasks));
-      }
-    };
-
-    if (user && user.id && characterName) {
-      fetchAll();
-    }
-  }, [characterName, user]);
-
+  // Open websocket + populate initial tasks (characterName set)
   useEffect(() => {
     if (user && user.id && characterName) {
       const wsUrl = `wss://cn2xa6jdhj.execute-api.eu-west-2.amazonaws.com/production/?discordID=${user.id}&characterName=${characterName}`;
@@ -169,10 +132,48 @@ export default function Home() {
     }
   }, [characterName, user]);
 
+  // Set plugins, skills & tasks (characterName set)
+  useEffect(() => {
+    const fetchAll = async () => {
+      if (!user) return;
+      const skillLevelsResponse = await fetch(
+        REST_ENDPOINT + user.id + "/" + characterName
+      );
+      const jsonData = await skillLevelsResponse.json();
+
+      const item = jsonData.item;
+      if (!item) {
+        console.log("No item found");
+        return;
+      }
+
+      // Set plugins
+      if (item.availablePlugins && item.availablePlugins.length > 0) {
+        setPlugins(parsePluginsFromJson(item.availablePlugins));
+      }
+
+      // Set skills
+      if (item.skills && item.skills.length > 0) {
+        setSkillLevels(parseSkillLevelsFromJson(item.skills));
+      }
+
+      // Set tasks
+      if (item.tasks === "") {
+        setTasks([]);
+      } else {
+        setTasks(parseTasksFromJson(item.tasks));
+      }
+    };
+
+    if (user && user.id && characterName) {
+      fetchAll();
+    }
+  }, [characterName, user]);
+
   return (
     <div className="min-h-screen bg-background p-8">
       <div className="max-w-[1920px] mx-auto relative">
-        <Header />
+        <Header user={user} characterName={characterName} />
 
         <Account
           setCharacterName={setCharacterName}
@@ -238,11 +239,22 @@ export class SkillLevel {
 export function parsePluginsFromJson(jsonString: string): string[] {
   const plugins: string[] = [];
 
-  const excludeTerms: string[] = ["Auto Eater", "Break", "Profiles", "Loader", "Scheduler", "Utils", "Webwalker"];
+  const excludeTerms: string[] = [
+    "Auto Eater",
+    "Break",
+    "Profiles",
+    "Loader",
+    "Scheduler",
+    "Utils",
+    "Webwalker",
+  ];
 
   const pluginsArr: string[] = jsonString.split(", ");
   for (const plugin of pluginsArr) {
-    if (plugin.includes("Shismo") && !excludeTerms.some(term => plugin.includes(term))) {
+    if (
+      plugin.includes("Shismo") &&
+      !excludeTerms.some((term) => plugin.includes(term))
+    ) {
       plugins.push(plugin);
     }
   }
