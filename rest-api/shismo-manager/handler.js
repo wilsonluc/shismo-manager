@@ -3,54 +3,115 @@
 const AWS = require("aws-sdk");
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
-module.exports.getCharacters = async (event) => {
+const fetchData = async (tableName, discordID, characterName=null) => {
+  const params = {
+    TableName: tableName,
+    KeyConditionExpression: "#discordID = :discordID",
+    ExpressionAttributeNames: {
+      "#discordID": "discordID",
+    },
+    ExpressionAttributeValues: {
+      ":discordID": discordID,
+    },
+  };
+
+  if (characterName !== null) {
+    params.KeyConditionExpression += " and #characterName = :characterName";
+    params.ExpressionAttributeNames["#characterName"] = "characterName";
+    params.ExpressionAttributeValues[":characterName"] = characterName;
+  }
+
   try {
-    const discordID = event.pathParameters.discordID;
-
-    // First get all connectionIDs associated with discordID
-    const params = {
-      TableName: "shismo-websocket-connections",
-      KeyConditionExpression: "#discordID = :discordID",
-      ExpressionAttributeNames: {
-        "#discordID": "discordID", // Partition key
-      },
-      ExpressionAttributeValues: {
-        ":discordID": discordID, // discordID from the event
-      },
-    };
-
-    // Perform the query to DynamoDB
     const data = await dynamoDb.query(params).promise();
-
-    if (data.Items) {
-      const characterNames = data.Items.map(
-        (item) => item.characterName
-      );
-
-      return {
-        statusCode: 200,
-        body: JSON.stringify(
-          {
-            message: "Character names fetched successfully",
-            characterNames: characterNames,
-          },
-          null,
-          2
-        ),
-      };
-    }
+    return data.Items || [];
   } catch (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify(
-        {
-          message: "Error fetching character names",
-          error: error.message,
-        },
-        null,
-        2
-      ),
-    };
+    throw new Error(`Error fetching data: ${error.message}`);
+  }
+};
+
+const generateResponse = (statusCode, message, data) => ({
+  statusCode,
+  body: JSON.stringify({ message, ...data }, null, 2),
+});
+
+module.exports.getCharacters = async (event) => {
+  const discordID = event.pathParameters.discordID;
+
+  try {
+    const data = await fetchData("shismo-websocket-connections", discordID);
+    const characterNames = data ? data.map((item) => item.characterName) : [];
+
+    return generateResponse(200, "Character names fetched successfully", {
+      characterNames,
+    });
+  } catch (error) {
+    return generateResponse(500, "Error fetching character names", {
+      error: error.message,
+    });
+  }
+};
+
+module.exports.getTasks = async (event) => {
+  const { discordID, characterName } = event.pathParameters;
+
+  try {
+    const data = await fetchData(
+      "shismo-websocket-connections",
+      discordID,
+      characterName
+    );
+    const tasks = data ? data.tasks || [] : [];
+
+    return generateResponse(200, "Tasks fetched successfully", { tasks });
+  } catch (error) {
+    return generateResponse(500, "Error fetching tasks", {
+      error: error.message,
+    });
+  }
+};
+
+module.exports.getSkills = async (event) => {
+  const { discordID, characterName } = event.pathParameters;
+
+  try {
+    const data = await fetchData(
+      "shismo-websocket-connections",
+      discordID,
+      characterName
+    );
+    const skills = data ? data.skills || [] : [];
+
+    return generateResponse(200, "Skills fetched successfully", { skills });
+  } catch (error) {
+    return generateResponse(500, "Error fetching skills", {
+      error: error.message,
+    });
+  }
+};
+
+module.exports.getAll = async (event) => {
+  const { discordID, characterName } = event.pathParameters;
+
+  try {
+    const data = await fetchData(
+      "shismo-websocket-connections",
+      discordID,
+      characterName
+    );
+
+    if (data) {
+      return generateResponse(200, "Data fetched successfully", { item: data });
+    }
+
+    return generateResponse(
+      200,
+      "No data found for the given discordID and characterName",
+      { item: {} }
+    );
+  } catch (error) {
+    return generateResponse(500, "Error fetching data", {
+      error: error.message,
+    });
   }
 };
 
@@ -185,206 +246,6 @@ module.exports.getCharacters = async (event) => {
 //     };
 //   }
 // };
-
-module.exports.getTasks = async (event) => {
-  try {
-    // Extract discordID and characterName from the event path parameters
-    const discordID = event.pathParameters.discordID;
-    const characterName = event.pathParameters.characterName;
-
-    // Query DynamoDB to fetch the tasks for the given discordID and characterName
-    const params = {
-      TableName: "shismo-websocket-connections",
-      KeyConditionExpression:
-        "#discordID = :discordID and #characterName = :characterName",
-      ExpressionAttributeNames: {
-        "#discordID": "discordID", // Partition key
-        "#characterName": "characterName", // Sort key
-      },
-      ExpressionAttributeValues: {
-        ":discordID": discordID, // discordID from the event
-        ":characterName": characterName, // characterName from the event
-      },
-    };
-
-    // Perform the query to DynamoDB
-    const data = await dynamoDb.query(params).promise();
-
-    // Check if we found any items
-    if (data.Items) {
-      // Assuming 'tasks' is a string attribute in the item
-      const tasks = data.Items[0].tasks;
-
-      return {
-        statusCode: 200,
-        body: JSON.stringify(
-          {
-            message: "Tasks fetched successfully",
-            tasks: tasks == null ? [] : tasks,
-          },
-          null,
-          2
-        ),
-      };
-    } else {
-      // No data found for the given discordID and characterName
-      return {
-        statusCode: 200,
-        body: JSON.stringify(
-          {
-            message: "No tasks found for the given discordID and characterName",
-            tasks: "",
-          },
-          null,
-          2
-        ),
-      };
-    }
-  } catch (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify(
-        {
-          message: "Error fetching tasks",
-          error: error.message,
-        },
-        null,
-        2
-      ),
-    };
-  }
-};
-
-module.exports.getSkills = async (event) => {
-  try {
-    // Extract discordID and characterName from the event path parameters
-    const discordID = event.pathParameters.discordID;
-    const characterName = event.pathParameters.characterName;
-
-    // Query DynamoDB to fetch the skills for the given discordID and characterName
-    const params = {
-      TableName: "shismo-websocket-connections",
-      KeyConditionExpression:
-        "#discordID = :discordID and #characterName = :characterName",
-      ExpressionAttributeNames: {
-        "#discordID": "discordID", // Partition key
-        "#characterName": "characterName", // Sort key
-      },
-      ExpressionAttributeValues: {
-        ":discordID": discordID, // discordID from the event
-        ":characterName": characterName, // characterName from the event
-      },
-    };
-
-    // Perform the query to DynamoDB
-    const data = await dynamoDb.query(params).promise();
-
-    // Check if we found any items
-    if (data.Items) {
-      // Assuming 'skills' is a string attribute in the item
-      const skills = data.Items[0].skills;
-
-      return {
-        statusCode: 200,
-        body: JSON.stringify(
-          {
-            message: "Skills fetched successfully",
-            skills: skills == null ? [] : skills,
-          },
-          null,
-          2
-        ),
-      };
-    } else {
-      // No data found for the given discordID and characterName
-      return {
-        statusCode: 200,
-        body: JSON.stringify(
-          {
-            message: "No skills found for the given discordID and characterName",
-            skills: "",
-          },
-          null,
-          2
-        ),
-      };
-    }
-  } catch (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify(
-        {
-          message: "Error fetching skills",
-          error: error.message,
-        },
-        null,
-        2
-      ),
-    };
-  }
-};
-
-module.exports.getAll = async (event) => {
-  try {
-    const discordID = event.pathParameters.discordID;
-    const characterName = event.pathParameters.characterName;
-
-    const params = {
-      TableName: "shismo-websocket-connections",
-      KeyConditionExpression:
-        "#discordID = :discordID and #characterName = :characterName",
-      ExpressionAttributeNames: {
-        "#discordID": "discordID", // Partition key
-        "#characterName": "characterName", // Sort key
-      },
-      ExpressionAttributeValues: {
-        ":discordID": discordID, // discordID from the event
-        ":characterName": characterName, // characterName from the event
-      },
-    };
-
-    const data = await dynamoDb.query(params).promise();
-
-    if (data.Items && data.Items.length > 0) {
-      return {
-        statusCode: 200,
-        body: JSON.stringify(
-          {
-            message: "Data fetched successfully",
-            item: data.Items[0], // Return all attributes
-          },
-          null,
-          2
-        ),
-      };
-    } else {
-      // No data found
-      return {
-        statusCode: 200,
-        body: JSON.stringify(
-          {
-            message: "No data found for the given discordID and characterName",
-            item: {},
-          },
-          null,
-          2
-        ),
-      };
-    }
-  } catch (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify(
-        {
-          message: "Error fetching data",
-          error: error.message,
-        },
-        null,
-        2
-      ),
-    };
-  }
-};
 
 // module.exports.setTasks = async (event) => {
 //   try {
