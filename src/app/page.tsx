@@ -242,8 +242,9 @@ export function parsePluginsFromJson(jsonString: string): string[] {
   const excludeTerms: string[] = [
     "Auto Eater",
     "Break",
-    "Profiles",
     "Loader",
+    "Profiles",
+    "Run Handler",
     "Scheduler",
     "Utils",
     "Webwalker",
