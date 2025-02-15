@@ -249,7 +249,9 @@ export function parsePluginsFromJson(jsonString: string): string[] {
     "Webwalker",
   ];
 
-  const pluginsArr: string[] = jsonString.split(", ");
+  // Remove '[' and ']'
+  const cleanedString: string = jsonString.replace(/[\[\]]/g, "");
+  const pluginsArr: string[] = cleanedString.split(", ");
   for (const plugin of pluginsArr) {
     if (
       plugin.includes("Shismo") &&
