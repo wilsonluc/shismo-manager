@@ -238,6 +238,8 @@ export class SkillLevel {
 
 export function parsePluginsFromJson(jsonString: string): string[] {
   const plugins: string[] = [];
+  // Manual push break plugin
+  plugins.push("Break");
 
   const excludeTerms: string[] = [
     "Auto Eater",
