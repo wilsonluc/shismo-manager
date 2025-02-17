@@ -66,9 +66,9 @@ const QueueContainer: React.FC<QueueContainerProps> = ({ tasks, setTasks, charac
       field: "duration",
       valueGetter: (params) => {
         if (params.data) {
-          if (params.data.level != null) {
+          if (params.data.level) {
             return "Lv. " + params.data.level;
-          } else if (params.data.duration != null) {
+          } else {
             return params.data.duration + " mins";
           }
         }

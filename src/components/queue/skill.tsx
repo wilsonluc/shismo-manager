@@ -10,7 +10,10 @@ export const generateSkill = (name: string): Skill => {
   };
 };
 
-export const getSkillIconPath = (skillName: string): string => {
+export const getSkillIconPath = (skillName: string | null): string | null => {
+  if (skillName === null) {
+    return null;
+  }
   // console.log(skillName);
   return `/assets/skills/${skillName.toLowerCase()}.png`;
 }
@@ -63,7 +66,7 @@ export const skillNames: string[] = [
   woodcutting,
 ];
 
-export const getSkillBySkillName = (skillName: string): string => {
+export const getSkillBySkillName = (skillName: string): string | null => {
   const skill = skillNames.find((name) => name.toLowerCase() === skillName.toLowerCase());
-  return skill || woodcutting;
+  return skill || null;
 };

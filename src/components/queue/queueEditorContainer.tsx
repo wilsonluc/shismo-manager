@@ -43,38 +43,20 @@ const QueueEditorContainer: React.FC<QueueEditorContainerProps> = ({
     if (!isAddButtonEnabled) return;
 
     // If fields are empty
-    if (!getSkillName.trim()) return;
     if (!getPlugin.trim()) return;
 
     // Validate skill
     const skill = getSkillBySkillName(getSkillName);
-    if (!skill) {
-      return;
-    }
+    const level = getLevel == null ? null : parseInt(getLevel);
+    const duration = getDuration == null ? null : parseInt(getDuration);
 
     const newCard: Task = {
       id: getLargestID(tasks),
-      skill: skill,
       pluginName: getPlugin,
+      skill: skill,
+      level: level,
+      duration: duration,
     };
-
-    if (getLevel.trim()) {
-      const level = Number.parseInt(getLevel);
-      if (!level) {
-        // TODO: Handle error
-        return;
-      }
-      newCard.level = level; // Use level if provided
-    } else if (getDuration.trim()) {
-      const duration = Number.parseInt(getDuration);
-      if (isNaN(duration) || duration <= 0) {
-        // TODO: Handle error
-        return;
-      }
-      newCard.duration = duration; // Use duration if provided
-    } else {
-      // TODO: Handle error
-    }
 
     setTasks((prevCards) => [...prevCards, newCard]);
   };
@@ -178,7 +160,6 @@ const QueueEditorContainer: React.FC<QueueEditorContainerProps> = ({
                       id="skill"
                       value={getSkillName}
                       onChange={(e) => setSkillName(e.target.value)}
-                      disabled={getDuration !== ""}
                       className="w-full p-2 border border-neutral-500 rounded text-black h-[2.5rem]"
                     >
                       <option value="">--Select Skill--</option>

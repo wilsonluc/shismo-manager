@@ -107,10 +107,10 @@ export default function Home() {
             const pluginName = jsonTasks[key].pluginName;
             const updatedTask = new Task(
               id,
-              skill,
+              pluginName,
               level,
+              skill,
               duration,
-              pluginName
             );
             updatedTasks.push(updatedTask);
           }
@@ -206,23 +206,23 @@ export default function Home() {
 
 export class Task {
   id: string;
-  skill: string;
-  level?: number;
-  duration?: number; // Minutes
   pluginName: string;
+  level: number | null;
+  skill: string | null;
+  duration: number | null; // Minutes
 
   constructor(
     id: string,
-    skill: string,
-    level: number,
-    duration: number,
-    pluginName: string
+    pluginName: string,
+    skill: string | null,
+    level: number | null,
+    duration: number | null
   ) {
     this.id = id;
+    this.pluginName = pluginName;
     this.skill = skill;
     this.level = level;
     this.duration = duration;
-    this.pluginName = pluginName;
   }
 }
 
