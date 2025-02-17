@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import ChevronIcon from "../dropdown/chevronIcon";
 import Dropdown from "../dropdown/dropdown";
-import { getSkillBySkillName, getSkillIconPath, skillNames } from "./skill";
-import Image from "next/image";
+import { getSkillBySkillName, skillNames } from "./skill";
 import { Task } from "../../app/page";
 
 function getLargestID(tasks: Task[]): string {
@@ -33,7 +32,6 @@ const QueueEditorContainer: React.FC<QueueEditorContainerProps> = ({
   const [getDuration, setDuration] = useState("");
   const [getPlugin, setPlugin] = useState("");
 
-  const [showSkillIcons, setShowSkillIcons] = useState(false);
   const [showPlugins, setShowPlugins] = useState(false);
   const [showLevelDuration, setShowLevelDuration] = useState(false);
 
@@ -83,26 +81,9 @@ const QueueEditorContainer: React.FC<QueueEditorContainerProps> = ({
       content={
         <div>
           <div className="flex gap-1">
-            {/* Skill */}
-            <button
-              onClick={() => {
-                setShowSkillIcons((prev) => !prev);
-                setShowPlugins(false);
-                setShowLevelDuration(false);
-              }} // Toggle the visibility of icons
-              className={`w-full p-2 mb-4 border border-neutral-500 rounded h-10 ${
-                showSkillIcons
-                  ? "bg-blue-500 text-white"
-                  : "bg-black text-white"
-              }`} // Change button color based on skill selection
-            >
-              Select Skill
-            </button>
-
             {/* Plugin */}
             <button
               onClick={() => {
-                setShowSkillIcons(false);
                 setShowPlugins((prev) => !prev);
                 setShowLevelDuration(false);
               }} // Toggle the visibility of icons
@@ -116,7 +97,6 @@ const QueueEditorContainer: React.FC<QueueEditorContainerProps> = ({
             {/* Level/Duration */}
             <button
               onClick={() => {
-                setShowSkillIcons(false);
                 setShowPlugins(false);
                 setShowLevelDuration((prev) => !prev);
               }} // Toggle the visibility of icons
@@ -126,35 +106,11 @@ const QueueEditorContainer: React.FC<QueueEditorContainerProps> = ({
                   : "bg-black text-white"
               }`} // Change button color based on skill selection
             >
-              Level/Duration
+              Level / Duration
             </button>
           </div>
 
           <div>
-            {/* Select Skill */}
-            {showSkillIcons && (
-              <div className="skill-icons-container grid grid-cols-3 gap-2 mb-4">
-                {skillNames.map((skill) => (
-                  <div
-                    key={skill}
-                    onClick={() => setSkillName(skill)}
-                    className={`skill-icon cursor-pointer p-2 text-center border border-neutral-300 rounded ${
-                      getSkillName === skill ? "bg-blue-500 text-white" : ""
-                    }`}
-                  >
-                    <Image
-                      src={getSkillIconPath(skill)}
-                      alt={skill}
-                      width={32}
-                      height={32}
-                      className="mx-auto"
-                    />
-                    <p>{skill}</p>{" "}
-                  </div>
-                ))}
-              </div>
-            )}
-
             {/* Select Plugin */}
             {showPlugins && (
               <div className="skill-icons-container grid grid-cols-2 gap-2 mb-4">
@@ -175,53 +131,90 @@ const QueueEditorContainer: React.FC<QueueEditorContainerProps> = ({
             {/* Select Level/Duration */}
             {showLevelDuration && (
               <div className="flex flex-col gap-2 mb-4">
-                {/* Level Input */}
-                <label htmlFor="level" className="text-white">
-                  Target Level:
-                </label>
-                <input
-                  id="level"
-                  type="number"
-                  onKeyDown={(e) => {
-                    if (
-                      e.key === "e" ||
-                      e.key === "E" ||
-                      e.key === "-" ||
-                      e.key === "."
-                    ) {
-                      e.preventDefault();
-                    }
-                  }}
-                  value={getLevel}
-                  onChange={(e) => setLevel(e.target.value)}
-                  disabled={getDuration !== ""}
-                  className="w-full p-2 border border-neutral-500 rounded text-black"
-                  placeholder="Enter target level"
-                />
+                <div className="flex gap-1">
+                  {/* Target Level Input */}
+                  <div className="flex-1">
+                    <label htmlFor="level" className="text-white">
+                      Target Level:
+                    </label>
+                    <input
+                      id="level"
+                      type="number"
+                      onKeyDown={(e) => {
+                        if (
+                          e.key === "e" ||
+                          e.key === "E" ||
+                          e.key === "-" ||
+                          e.key === "."
+                        ) {
+                          e.preventDefault();
+                        }
+                      }}
+                      value={getLevel}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        if (Number(value) >= 1 || value === "") {
+                          setLevel(value); // Only set the value if it's greater than or equal to 1
+                        }
+                      }}
+                      disabled={getDuration !== ""}
+                      className="w-full p-2 border border-neutral-500 rounded text-black h-[2.5rem]"
+                      placeholder="Enter target level"
+                    />
+                  </div>
 
-                {/* Duration Input (in minutes or hours) */}
-                <label htmlFor="duration" className="text-white">
-                  Duration (minutes):
-                </label>
-                <input
-                  id="duration"
-                  type="number"
-                  onKeyDown={(e) => {
-                    if (
-                      e.key === "e" ||
-                      e.key === "E" ||
-                      e.key === "-" ||
-                      e.key === "."
-                    ) {
-                      e.preventDefault();
-                    }
-                  }}
-                  value={getDuration}
-                  onChange={(e) => setDuration(e.target.value)}
-                  disabled={getLevel !== ""}
-                  className="w-full p-2 border border-neutral-500 rounded text-black"
-                  placeholder="Enter duration (minutes)"
-                />
+                  {/* Skill Dropdown */}
+                  <div className="flex-1">
+                    <label htmlFor="skill" className="text-white">
+                      Select Skill:
+                    </label>
+                    <select
+                      id="skill"
+                      value={getSkillName}
+                      onChange={(e) => setSkillName(e.target.value)}
+                      disabled={getDuration !== ""}
+                      className="w-full p-2 border border-neutral-500 rounded text-black h-[2.5rem]"
+                    >
+                      <option value="">--Select Skill--</option>
+                      {skillNames.map((skill) => (
+                        <option key={skill} value={skill}>
+                          {skill}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Duration Input */}
+                <div className="flex-1">
+                  <label htmlFor="duration" className="text-white">
+                    Duration (minutes):
+                  </label>
+                  <input
+                    id="duration"
+                    type="number"
+                    onKeyDown={(e) => {
+                      if (
+                        e.key === "e" ||
+                        e.key === "E" ||
+                        e.key === "-" ||
+                        e.key === "."
+                      ) {
+                        e.preventDefault();
+                      }
+                    }}
+                    value={getDuration}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (Number(value) >= 1 || value === "") {
+                        setDuration(value); // Only set the value if it's greater than or equal to 1
+                      }
+                    }}
+                    disabled={getLevel !== ""}
+                    className="w-full p-2 border border-neutral-500 rounded text-black"
+                    placeholder="Enter duration (minutes)"
+                  />
+                </div>
               </div>
             )}
           </div>
