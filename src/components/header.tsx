@@ -13,7 +13,7 @@ const Header: React.FC<HeaderProps> = ({ user, characterName }) => {
     <div className="flex flex-col gap-1 mb-8">
       <h1 className="text-3xl font-bold text-foreground">Shismo Manager</h1>
       <p className="text-sm text-muted-foreground">
-        {characterName ? 'Currently character: ' + characterName : user ? 'Please select a character' : 'Please log in'}
+        {characterName ? 'Current character: ' + characterName : user ? 'Please select a character' : 'Please log in'}
       </p>
     </div>
   );

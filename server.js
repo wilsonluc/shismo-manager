@@ -15,14 +15,16 @@ const handle = app.getRequestHandler();
 app.prepare().then(() => {
   const server = express();
 
-  // Enable CORS
-  server.use(
-    cors({
-      origin: "http://localhost:3000",
-      methods: ["GET", "PUT", "OPTIONS"],
-      allowedHeaders: ["Content-Type", "Authorization"],
-    })
-  );
+  const corsOptions = {
+    methods: ["GET", "PUT", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  };
+
+  if (process.env.NODE_ENV === 'production') {
+    corsOptions.origin = "https://your-production-url.com";  // TODO: Uppdate with production URL
+  } else {
+    corsOptions.origin = "http://localhost:3000";  // Local development URL
+  }
 
   // Initialize session middleware
   server.use(
