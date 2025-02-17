@@ -35,7 +35,13 @@ const QueueEditorContainer: React.FC<QueueEditorContainerProps> = ({
   const [showPlugins, setShowPlugins] = useState(false);
   const [showLevelDuration, setShowLevelDuration] = useState(false);
 
+  const isAddButtonEnabled =
+    getPlugin.trim() !== "" &&
+    ((getLevel.trim() !== "" && getSkillName.trim() !== "") || getDuration.trim() !== "");
+
   const handleAddCard = () => {
+    if (!isAddButtonEnabled) return;
+
     // If fields are empty
     if (!getSkillName.trim()) return;
     if (!getPlugin.trim()) return;
@@ -221,9 +227,9 @@ const QueueEditorContainer: React.FC<QueueEditorContainerProps> = ({
 
           <button
             onClick={handleAddCard}
-            disabled={characterName === undefined}
+            disabled={!isAddButtonEnabled || characterName === undefined}
             className={`w-full p-2 rounded text-white ${
-              characterName === undefined
+              !isAddButtonEnabled || characterName === undefined
                 ? "bg-gray-400 cursor-not-allowed"
                 : "bg-blue-500"
             }`}
