@@ -21,7 +21,7 @@ app.prepare().then(() => {
   };
 
   if (process.env.NODE_ENV === 'production') {
-    corsOptions.origin = "http://35.176.244.161";  // TODO: Update with domain
+    corsOptions.origin = "https://manager.shismoplugins.com";  // TODO: Update with domain
   } else {
     corsOptions.origin = "http://localhost:3000";  // Local development URL
   }
