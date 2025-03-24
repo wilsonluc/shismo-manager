@@ -21,7 +21,7 @@ app.prepare().then(() => {
   };
 
   if (process.env.NODE_ENV === 'production') {
-    corsOptions.origin = "https://your-production-url.com";  // TODO: Uppdate with production URL
+    corsOptions.origin = "http://35.176.244.161";  // TODO: Update with domain
   } else {
     corsOptions.origin = "http://localhost:3000";  // Local development URL
   }
@@ -101,8 +101,8 @@ app.prepare().then(() => {
   });
 
   // Start the server
-  server.listen(process.env.PORT, (err) => {
+  server.listen(process.env.PORT, '0.0.0.0', (err) => {
     if (err) throw err;
-    console.log("> Ready on http://localhost:3000");
-  });
+    console.log("> Ready on http://0.0.0.0:" + process.env.PORT);
+  });  
 });
