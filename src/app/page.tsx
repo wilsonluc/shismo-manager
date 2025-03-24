@@ -20,6 +20,12 @@ import {
 
 
 export default function Home() {
+  const [mounted, setMounted] = useState(false); // Track mounting
+
+  useEffect(() => {
+    setMounted(true); // Set to true once the component mounts
+  }, []);
+
   const [user, setUser] = useState<Profile | undefined>();
   const [characterNames, setCharacterNames] = useState<string[]>([]);
   const [loadingCharacterNames, setLoadingCharacterNames] = useState(false);
@@ -179,6 +185,8 @@ export default function Home() {
     }
   }, [characterName, user]);
 
+  if (!mounted) return null; // Prevent rendering before mount
+  
   return (
     <div className="min-h-screen bg-background p-8">
       <div className="max-w-[1920px] mx-auto relative">
