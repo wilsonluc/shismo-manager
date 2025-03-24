@@ -14,11 +14,14 @@ const handle = app.getRequestHandler();
 
 app.prepare().then(() => {
   const server = express();
-
   const corsOptions = {
     methods: ["GET", "PUT", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   };
+  
+  server.use(cors(corsOptions));
+
+
 
   if (process.env.NODE_ENV === 'production') {
     corsOptions.origin = "https://manager.shismoplugins.com";  // TODO: Update with domain
